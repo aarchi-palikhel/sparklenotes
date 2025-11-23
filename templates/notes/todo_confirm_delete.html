@@ -1,0 +1,35 @@
+{% extends 'notes/base.html' %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="text-center mb-8">
+        <div class="w-16 h-16 bg-linear-to-r from-red-400 to-pink-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <span class="text-white text-2xl">🗑️</span>
+        </div>
+        <h2 class="text-3xl font-bold text-red-600 mb-4">Delete Note? 😢</h2>
+    </div>
+    
+    <div class="note-card p-8 rounded-2xl text-center">
+        <div class="bg-white rounded-xl p-6 mb-6 border-2 border-red-200">
+            <h3 class="text-2xl font-bold text-pink-700 mb-4">{{ note.title }}</h3>
+            <p class="text-gray-600 mb-4">Are you sure you want to delete this cute note? This action cannot be undone! 💔</p>
+            <div class="bg-pink-50 rounded-lg p-4 border border-pink-200">
+                <p class="text-gray-700 text-sm whitespace-pre-line">{{ note.content|truncatewords:30 }}</p>
+            </div>
+        </div>
+        
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            <div class="flex space-x-4 justify-center">
+                <button type="submit" class="bg-linear-to-r from-red-500 to-pink-600 text-white px-8 py-3 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition duration-300 flex items-center">
+                    <span class="mr-2">🗑️</span>Yes, Delete It
+                </button>
+                <a href="{% url 'note_list' %}" class="bg-linear-to-r from-gray-400 to-gray-500 text-white px-8 py-3 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition duration-300 flex items-center">
+                    <span class="mr-2">❌</span>Cancel
+                </a>
+            </div>
+            <p class="text-sm text-gray-500 mt-4">Don't worry, you can always create new sparkly notes! ✨</p>
+        </form>
+    </div>
+</div>
+{% endblock %}

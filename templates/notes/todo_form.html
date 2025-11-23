@@ -1,0 +1,53 @@
+{% extends 'notes/base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="text-center mb-8">
+        <div class="w-16 h-16 bg-linear-to-r from-green-400 to-blue-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <span class="text-white text-2xl">✅</span>
+        </div>
+        <h2 class="text-4xl font-bold sparkle-text">{{ title }} 🌟</h2>
+    </div>
+    
+    <div class="todo-card p-8 rounded-2xl">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="mb-6">
+                <label class="text-purple-700 font-bold mb-3 text-lg flex items-center">
+                    <span class="mr-2">📝</span>Task Title
+                </label>
+                <input type="text" name="title" value="{{ form.title.value|default:'' }}" 
+                       class="w-full p-4 border-2 border-purple-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 outline-none transition duration-300"
+                       placeholder="What do you want to accomplish? ✨" required>
+            </div>
+            
+            <div class="mb-6">
+                <label class="text-purple-700 font-bold mb-3 text-lg flex items-center">
+                    <span class="mr-2">📄</span>Description (Optional)
+                </label>
+                <textarea name="description" rows="4" 
+                          class="w-full p-4 border-2 border-purple-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 outline-none transition duration-300"
+                          placeholder="Add some details about your task... 🌈">{{ form.description.value|default:'' }}</textarea>
+            </div>
+            
+            <div class="mb-6">
+                <label class="text-purple-700 font-bold mb-3 text-lg flex items-center">
+                    <span class="mr-2">📅</span>Due Date (Optional)
+                </label>
+                <input type="datetime-local" name="due_date" value="{{ form.due_date.value|default:'' }}"
+                       class="w-full p-4 border-2 border-purple-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 outline-none transition duration-300">
+            </div>
+            
+            <div class="flex space-x-4 justify-center">
+                <button type="submit" class="btn-pink text-white px-8 py-3 rounded-full font-semibold text-lg shadow-lg flex items-center">
+                    <span class="mr-2">💾</span>Save Todo
+                </button>
+                <a href="{% url 'todo_list' %}" class="bg-linear-to-r from-gray-400 to-gray-500 text-white px-8 py-3 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition duration-300 flex items-center">
+                    <span class="mr-2">❌</span>Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

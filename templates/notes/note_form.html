@@ -1,0 +1,45 @@
+{% extends 'notes/base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="text-center mb-8">
+        <div class="w-16 h-16 bg-linear-to-r from-pink-400 to-purple-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <span class="text-white text-2xl">✏️</span>
+        </div>
+        <h2 class="text-4xl font-bold sparkle-text">{{ title }} ✨</h2>
+    </div>
+    
+    <div class="note-card p-8 rounded-2xl">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="mb-6">
+                <label class="text-pink-700 font-bold mb-3 text-lg flex items-center">
+                    <span class="mr-2">📝</span>Note Title
+                </label>
+                <input type="text" name="title" value="{{ form.title.value|default:'' }}" 
+                       class="w-full p-4 border-2 border-pink-200 rounded-xl focus:border-pink-400 focus:ring-2 focus:ring-pink-200 outline-none transition duration-300"
+                       placeholder="Enter a cute title..." required>
+            </div>
+            
+            <div class="mb-6">
+                <label class="text-pink-700 font-bold mb-3 text-lg flex items-center">
+                    <span class="mr-2">💭</span>Your Thoughts
+                </label>
+                <textarea name="content" rows="8" 
+                          class="w-full p-4 border-2 border-pink-200 rounded-xl focus:border-pink-400 focus:ring-2 focus:ring-pink-200 outline-none transition duration-300"
+                          placeholder="Write your sparkly thoughts here... ✨" required>{{ form.content.value|default:'' }}</textarea>
+            </div>
+            
+            <div class="flex space-x-4 justify-center">
+                <button type="submit" class="btn-pink text-white px-8 py-3 rounded-full font-semibold text-lg shadow-lg flex items-center">
+                    <span class="mr-2">💾</span>Save Note
+                </button>
+                <a href="{% url 'note_list' %}" class="bg-linear-to-r from-gray-400 to-gray-500 text-white px-8 py-3 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition duration-300 flex items-center">
+                    <span class="mr-2">❌</span>Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

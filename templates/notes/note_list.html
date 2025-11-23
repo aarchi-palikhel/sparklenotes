@@ -1,0 +1,86 @@
+{% extends 'notes/base.html' %}
+
+{% block content %}
+<!-- Show summary from session if exists -->
+{% if request.session.last_summary %}
+<div class="bg-linear-to-r from-purple-50 to-pink-50 border-l-4 border-purple-500 p-4 mb-6 rounded-lg shadow-md">
+    <div class="flex justify-between items-start">
+        <div>
+            <h4 class="text-lg font-bold text-purple-700 flex items-center">
+                <span class="mr-2">✨</span>AI Summary for "{{ request.session.last_summary.note_title }}"
+            </h4>
+            <p class="text-gray-700 mt-2">{{ request.session.last_summary.summary }}</p>
+        </div>
+        <button onclick="clearSummary()" class="text-purple-500 hover:text-purple-700 ml-4">
+            <span class="text-xl">×</span>
+        </button>
+    </div>
+</div>
+{% endif %}
+
+<div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h2 class="text-4xl font-bold sparkle-text mb-2">Your Notes 📝</h2>
+            <p class="text-gray-600">All your thoughts and ideas in one sparkly place! ✨</p>
+        </div>
+        <a href="{% url 'note_create' %}" class="btn-pink text-white px-6 py-3 rounded-full font-semibold shadow-lg">
+            <span class="mr-2">+</span>New Note
+        </a>
+    </div>
+
+    <!-- Notes Grid -->
+    <div class="space-y-6">
+        {% for note in notes %}
+        <div class="note-card p-6 rounded-2xl transform hover:scale-105 transition duration-300">
+            <div class="flex justify-between items-start mb-4">
+                <h3 class="text-2xl font-bold text-pink-700">{{ note.title }}</h3>
+                <div class="flex space-x-2">
+                    <form method="post" action="{% url 'summarize_note' note.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="bg-linear-to-r from-purple-400 to-pink-400 text-white px-4 py-2 rounded-full text-sm font-semibold hover:shadow-lg transition duration-300 flex items-center">
+                            <span class="mr-1">✨</span>Sparkle Summary
+                        </button>
+                    </form>
+                    <a href="{% url 'note_edit' note.id %}" 
+                       class="bg-linear-to-r from-yellow-400 to-orange-400 text-white px-4 py-2 rounded-full text-sm font-semibold hover:shadow-lg transition duration-300 flex items-center">
+                        <span class="mr-1">✏️</span>Edit
+                    </a>
+                    <a href="{% url 'note_delete' note.id %}" 
+                       class="bg-linear-to-r from-red-400 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-semibold hover:shadow-lg transition duration-300 flex items-center">
+                        <span class="mr-1">🗑️</span>Delete
+                    </a>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl p-4 mb-4 border border-pink-100">
+                <p class="text-gray-700 whitespace-pre-line leading-relaxed">{{ note.content }}</p>
+            </div>
+            
+            <div class="flex justify-between items-center text-sm text-pink-500">
+                <span class="flex items-center">
+                    <span class="mr-1">📅</span>Created: {{ note.created_at|date:"M d, Y" }}
+                </span>
+                {% if note.updated_at != note.created_at %}
+                <span class="flex items-center">
+                    <span class="mr-1">✏️</span>Updated: {{ note.updated_at|date:"M d, Y" }}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="note-card p-12 text-center rounded-2xl">
+            <div class="w-20 h-20 bg-pink-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                <span class="text-pink-500 text-3xl">📝</span>
+            </div>
+            <h3 class="text-2xl font-bold text-pink-600 mb-3">No notes yet, cutie! 💕</h3>
+            <p class="text-gray-600 mb-6">Why not create your first sparkly note? It's super fun! ✨</p>
+            <a href="{% url 'note_create' %}" class="btn-pink text-white px-8 py-3 rounded-full font-semibold inline-block">
+                <span class="mr-2">✨</span>Create First Note
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

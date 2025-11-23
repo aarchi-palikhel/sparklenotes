@@ -1,0 +1,93 @@
+{% extends 'notes/base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h2 class="text-4xl font-bold sparkle-text mb-2">Your Sparkly To-dos ✅</h2>
+            <p class="text-gray-600">Check off your tasks and feel amazing! You're doing great! 🌟</p>
+        </div>
+        <a href="{% url 'todo_create' %}" class="btn-pink text-white px-6 py-3 rounded-full font-semibold shadow-lg">
+            <span class="mr-2">+</span>New Todo
+        </a>
+    </div>
+
+    <!-- AI Suggestion Section -->
+    <div class="todo-card p-6 rounded-2xl mb-8">
+        <h3 class="text-2xl font-bold text-purple-600 mb-4 flex items-center">
+            <span class="mr-3">🤖</span>Get Magical Task Suggestions! ✨
+        </h3>
+        <div class="flex space-x-3 mb-3">
+            <input type="text" id="task_description" placeholder="What's your main task, cutie? 🎀..." 
+                   class="flex-1 p-4 border-2 border-pink-200 rounded-2xl focus:border-pink-400 focus:ring-2 focus:ring-pink-200 outline-none text-lg">
+            <button onclick="suggestTodo()" class="bg-linear-to-r from-purple-500 to-pink-500 text-white px-6 py-4 rounded-2xl font-semibold hover:shadow-lg transition duration-300 flex items-center">
+                <span class="mr-2">✨</span>Sparkle!
+            </button>
+        </div>
+        <div id="suggestions"></div>
+    </div>
+
+    <!-- Todo Items -->
+    <div class="space-y-4">
+        {% for todo in todos %}
+        <div class="todo-card p-5 rounded-2xl transform hover:scale-105 transition duration-300 {% if todo.completed %}opacity-75{% endif %}">
+            <div class="flex items-start justify-between">
+                <div class="flex items-start space-x-4 flex-1">
+                    <form method="post" action="{% url 'todo_toggle' todo.id %}" class="mt-1">
+                        {% csrf_token %}
+                        <button type="submit" class="focus:outline-none transform hover:scale-110 transition duration-200">
+                            <div class="w-8 h-8 border-2 {% if todo.completed %}bg-green-400 border-green-400{% else %}border-pink-300{% endif %} rounded-full flex items-center justify-center shadow-md">
+                                {% if todo.completed %}
+                                <span class="text-white text-sm">✓</span>
+                                {% else %}
+                                <div class="w-4 h-4 bg-pink-200 rounded-full"></div>
+                                {% endif %}
+                            </div>
+                        </button>
+                    </form>
+                    
+                    <div class="flex-1">
+                        <h3 class="text-xl font-semibold {% if todo.completed %}line-through text-gray-500{% else %}text-purple-700{% endif %}">
+                            {% if todo.completed %}🎉 {% endif %}{{ todo.title }}
+                        </h3>
+                        {% if todo.description %}
+                        <p class="text-gray-600 mt-2 bg-white p-3 rounded-lg border border-pink-100">{{ todo.description }}</p>
+                        {% endif %}
+                        
+                        <div class="flex space-x-4 mt-3 text-sm text-pink-500">
+                            <span class="flex items-center">
+                                <span class="mr-1">📅</span>{{ todo.created_at|date:"M d, Y" }}
+                            </span>
+                            {% if todo.due_date %}
+                            <span class="flex items-center">
+                                <span class="mr-1">⏰</span>Due: {{ todo.due_date|date:"M d, Y" }}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ml-4">
+                    <a href="{% url 'todo_delete' todo.id %}" 
+                       class="bg-linear-to-r from-red-400 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-semibold hover:shadow-lg transition duration-300 inline-flex items-center">
+                        <span class="mr-1">🗑️</span>Delete
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="todo-card p-12 text-center rounded-2xl">
+            <div class="w-20 h-20 bg-pink-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                <span class="text-pink-500 text-3xl">✅</span>
+            </div>
+            <h3 class="text-2xl font-bold text-pink-600 mb-3">No todos yet! 🌈</h3>
+            <p class="text-gray-600 mb-6">Time to create your first sparkly task! You'll feel so accomplished! 💫</p>
+            <a href="{% url 'todo_create' %}" class="btn-pink text-white px-8 py-3 rounded-full font-semibold inline-block">
+                <span class="mr-2">✨</span>Create First Todo
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

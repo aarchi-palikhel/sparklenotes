@@ -1,0 +1,46 @@
+# Django
+*.pyc
+*__pycache__/
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Database
+*.sqlite3
+*.db
+db.sqlite3
+
+# Environment variables
+.env
+.env.local
+
+# Django secret key
+secret_key.txt
+
+# Static files
+staticfiles/
+mediafiles/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Tailwind
+node_modules/
+.npm/
+.cache/

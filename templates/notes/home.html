@@ -1,0 +1,97 @@
+{% extends 'notes/base.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <!-- Welcome Section -->
+    <div class="text-center mb-12">
+        <div class="w-24 h-24 bg-linear-to-r from-pink-400 to-purple-500 rounded-full mx-auto mb-6 flex items-center justify-center shadow-xl">
+            <span class="text-white text-4xl">✨</span>
+        </div>
+        <h2 class="text-5xl font-bold sparkle-text mb-4">Welcome to SparkleNotes! ✨</h2>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto">Your adorable little space for notes and todos, sprinkled with AI magic! 🌈</p>
+    </div>
+
+    <!-- Feature Cards -->
+    <div class="grid md:grid-cols-2 gap-8 mb-12">
+        <!-- Notes Card -->
+        <div class="note-card p-8 rounded-2xl transform hover:scale-105 transition duration-300 shadow-lg">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-pink-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+                    <span class="text-white text-2xl">📝</span>
+                </div>
+                <h3 class="text-3xl font-bold text-pink-600 mb-3">Cute Notes 📝</h3>
+                <p class="text-gray-600 mb-4">Write your thoughts in the prettiest way! Get AI summaries to make everything easier! 💖</p>
+                <a href="{% url 'note_list' %}" class="btn-pink text-white px-8 py-3 rounded-full inline-block font-semibold">
+                    <span class="mr-2">✨</span>View Notes
+                </a>
+            </div>
+        </div>
+
+        <!-- Todos Card -->
+        <div class="todo-card p-8 rounded-2xl transform hover:scale-105 transition duration-300 shadow-lg">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-purple-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+                    <span class="text-white text-2xl">✅</span>
+                </div>
+                <h3 class="text-3xl font-bold text-purple-600 mb-3">Sparkly Todos ✅</h3>
+                <p class="text-gray-600 mb-4">Manage your tasks with cute checkboxes and get AI suggestions! You got this! 🌟</p>
+                <a href="{% url 'todo_list' %}" class="btn-pink text-white px-8 py-3 rounded-full inline-block font-semibold">
+                    <span class="mr-2">✨</span>View Todos
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Features Section -->
+    <div class="bg-white rounded-3xl p-8 shadow-lg border-2 border-pink-200">
+        <div class="text-center mb-8">
+            <div class="w-20 h-20 bg-linear-to-r from-purple-400 to-pink-400 rounded-full mx-auto mb-4 flex items-center justify-center">
+                <span class="text-white text-3xl">🤖</span>
+            </div>
+            <h3 class="text-4xl font-bold sparkle-text mb-4">Magical AI Features ✨</h3>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="text-center p-6 bg-pink-50 rounded-2xl border border-pink-200">
+                <span class="text-pink-500 text-3xl mb-4 block">✨</span>
+                <h4 class="text-xl font-bold text-pink-600 mb-3">Smart Summaries</h4>
+                <p class="text-gray-600">Get cute AI summaries of your long notes with just one click!</p>
+            </div>
+            
+            <div class="text-center p-6 bg-purple-50 rounded-2xl border border-purple-200">
+                <span class="text-purple-500 text-3xl mb-4 block">💡</span>
+                <h4 class="text-xl font-bold text-purple-600 mb-3">Task Ideas</h4>
+                <p class="text-gray-600">Stuck? Get sparkly suggestions for your todos from our AI! 🌈</p>
+            </div>
+            
+            <div class="text-center p-6 bg-blue-50 rounded-2xl border border-blue-200">
+                <span class="text-blue-500 text-3xl mb-4 block">💖</span>
+                <h4 class="text-xl font-bold text-blue-600 mb-3">Super Cute</h4>
+                <p class="text-gray-600">Everything is designed to make you smile while being productive! 💕</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="mt-12 text-center">
+        <div class="inline-flex space-x-8 text-pink-600">
+            <div class="text-center">
+                <div class="text-3xl font-bold">🎀</div>
+                <div class="text-sm">Super Cute</div>
+            </div>
+            <div class="text-center">
+                <div class="text-3xl font-bold">🌈</div>
+                <div class="text-sm">Colorful</div>
+            </div>
+            <div class="text-center">
+                <div class="text-3xl font-bold">✨</div>
+                <div class="text-sm">Magical</div>
+            </div>
+            <div class="text-center">
+                <div class="text-3xl font-bold">💖</div>
+                <div class="text-sm">Lovely</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
