@@ -13,7 +13,7 @@ A cute, girly note-taking app with AI integration built with Django and Tailwind
 ## Tech Stack
 
 - **Backend**: Django 5.2
-- **Frontend**: Tailwind CSS
+- **Frontend**: HTML, Tailwind CSS
 - **Database**: PostgreSQL / SQLite
 - **AI**: Google Gemini API
 - **Styling**: Custom CSS with gradients and animations
@@ -40,7 +40,6 @@ sparklenotes/
 ├── notes/                 # Main app
 ├── notes_project/         # Django project
 ├── theme/                 # Tailwind theme
-├── static/               # Static files
 ├── templates/            # HTML templates
 └── requirements.txt      # Python dependencies
 ```
