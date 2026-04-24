@@ -3,95 +3,110 @@
 {% block content %}
 <div class="max-w-6xl mx-auto">
     <!-- Welcome Section -->
-    <div class="text-center mb-12">
-        <div class="w-24 h-24 bg-linear-to-r from-pink-400 to-purple-500 rounded-full mx-auto mb-6 flex items-center justify-center shadow-xl">
-            <span class="text-white text-4xl">✨</span>
-        </div>
-        <h2 class="text-5xl font-bold sparkle-text mb-4">Welcome to SparkleNotes! ✨</h2>
-        <p class="text-xl text-gray-600 max-w-2xl mx-auto">Your adorable little space for notes and todos, sprinkled with AI magic! 🌈</p>
+    <div class="mb-12">
+        <h1 class="text-5xl font-bold sparkle-text mb-4">Welcome, {{ user.first_name|default:user.username }}! 👋</h1>
+        <p class="text-xl text-gray-600">Your personal sparkly note-taking companion</p>
     </div>
 
-    <!-- Feature Cards -->
-    <div class="grid md:grid-cols-2 gap-8 mb-12">
-        <!-- Notes Card -->
-        <div class="note-card p-8 rounded-2xl transform hover:scale-105 transition duration-300 shadow-lg">
-            <div class="text-center mb-6">
-                <div class="w-16 h-16 bg-pink-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-                    <span class="text-white text-2xl">📝</span>
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div class="note-card p-8 rounded-2xl text-center">
+            <div class="text-4xl font-bold sparkle-text mb-2">{{ total_notes }}</div>
+            <p class="text-gray-600 text-lg">📝 Total Notes</p>
+        </div>
+        <div class="todo-card p-8 rounded-2xl text-center">
+            <div class="text-4xl font-bold text-purple-600 mb-2">{{ total_todos }}</div>
+            <p class="text-gray-600 text-lg">✅ Total Todos</p>
+        </div>
+        <div class="note-card p-8 rounded-2xl text-center">
+            <div class="text-4xl font-bold text-green-600 mb-2">{{ completed_todos }}</div>
+            <p class="text-gray-600 text-lg">🎉 Completed Todos</p>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mb-12">
+        <h2 class="text-3xl font-bold mb-6">Quick Actions</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <a href="{% url 'note_create' %}" class="btn-pink text-white px-8 py-6 rounded-2xl font-bold text-lg text-center hover:shadow-lg transition">
+                <span class="text-3xl">📝</span><br>
+                Create New Note
+            </a>
+            <a href="{% url 'todo_create' %}" class="btn-pink text-white px-8 py-6 rounded-2xl font-bold text-lg text-center hover:shadow-lg transition">
+                <span class="text-3xl">✨</span><br>
+                Create New Todo
+            </a>
+        </div>
+    </div>
+
+    <!-- Recent Notes -->
+    {% if recent_notes %}
+    <div class="mb-12">
+        <h2 class="text-3xl font-bold mb-6">📝 Recent Notes</h2>
+        <div class="space-y-4">
+            {% for note in recent_notes %}
+            <div class="note-card p-6 rounded-2xl">
+                <div class="flex justify-between items-start">
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-purple-600">{{ note.title }}</h3>
+                        <p class="text-gray-600 mt-2 line-clamp-2">{{ note.content }}</p>
+                        <p class="text-sm text-gray-500 mt-3">📅 {{ note.created_at|date:"M d, Y" }}</p>
+                    </div>
+                    <a href="{% url 'note_edit' note.id %}" class="bg-pink-400 hover:bg-pink-500 text-white px-4 py-2 rounded-lg">
+                        Edit ✏️
+                    </a>
                 </div>
-                <h3 class="text-3xl font-bold text-pink-600 mb-3">Cute Notes 📝</h3>
-                <p class="text-gray-600 mb-4">Write your thoughts in the prettiest way! Get AI summaries to make everything easier! 💖</p>
-                <a href="{% url 'note_list' %}" class="btn-pink text-white px-8 py-3 rounded-full inline-block font-semibold">
-                    <span class="mr-2">✨</span>View Notes
-                </a>
             </div>
+            {% endfor %}
         </div>
+    </div>
+    {% endif %}
 
-        <!-- Todos Card -->
-        <div class="todo-card p-8 rounded-2xl transform hover:scale-105 transition duration-300 shadow-lg">
-            <div class="text-center mb-6">
-                <div class="w-16 h-16 bg-purple-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-                    <span class="text-white text-2xl">✅</span>
+    <!-- Recent Todos -->
+    {% if recent_todos %}
+    <div class="mb-12">
+        <h2 class="text-3xl font-bold mb-6">✅ Recent Todos</h2>
+        <div class="space-y-4">
+            {% for todo in recent_todos %}
+            <div class="todo-card p-6 rounded-2xl">
+                <div class="flex justify-between items-start">
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-purple-600">
+                            {% if todo.completed %}
+                            <span class="line-through text-gray-400">{{ todo.title }}</span> ✅
+                            {% else %}
+                            {{ todo.title }}
+                            {% endif %}
+                        </h3>
+                        {% if todo.description %}
+                        <p class="text-gray-600 mt-2">{{ todo.description }}</p>
+                        {% endif %}
+                        <p class="text-sm text-gray-500 mt-3">📅 {{ todo.created_at|date:"M d, Y" }}</p>
+                    </div>
+                    <a href="{% url 'todo_toggle' todo.id %}" class="{% if todo.completed %}bg-green-400 hover:bg-green-500{% else %}bg-yellow-400 hover:bg-yellow-500{% endif %} text-white px-4 py-2 rounded-lg">
+                        {% if todo.completed %}Done{% else %}In Progress{% endif %}
+                    </a>
                 </div>
-                <h3 class="text-3xl font-bold text-purple-600 mb-3">Sparkly Todos ✅</h3>
-                <p class="text-gray-600 mb-4">Manage your tasks with cute checkboxes and get AI suggestions! You got this! 🌟</p>
-                <a href="{% url 'todo_list' %}" class="btn-pink text-white px-8 py-3 rounded-full inline-block font-semibold">
-                    <span class="mr-2">✨</span>View Todos
-                </a>
             </div>
+            {% endfor %}
         </div>
     </div>
+    {% endif %}
 
-    <!-- AI Features Section -->
-    <div class="bg-white rounded-3xl p-8 shadow-lg border-2 border-pink-200">
-        <div class="text-center mb-8">
-            <div class="w-20 h-20 bg-linear-to-r from-purple-400 to-pink-400 rounded-full mx-auto mb-4 flex items-center justify-center">
-                <span class="text-white text-3xl">🤖</span>
-            </div>
-            <h3 class="text-4xl font-bold sparkle-text mb-4">Magical AI Features ✨</h3>
-        </div>
-        
-        <div class="grid md:grid-cols-3 gap-6">
-            <div class="text-center p-6 bg-pink-50 rounded-2xl border border-pink-200">
-                <span class="text-pink-500 text-3xl mb-4 block">✨</span>
-                <h4 class="text-xl font-bold text-pink-600 mb-3">Smart Summaries</h4>
-                <p class="text-gray-600">Get cute AI summaries of your long notes with just one click!</p>
-            </div>
-            
-            <div class="text-center p-6 bg-purple-50 rounded-2xl border border-purple-200">
-                <span class="text-purple-500 text-3xl mb-4 block">💡</span>
-                <h4 class="text-xl font-bold text-purple-600 mb-3">Task Ideas</h4>
-                <p class="text-gray-600">Stuck? Get sparkly suggestions for your todos from our AI! 🌈</p>
-            </div>
-            
-            <div class="text-center p-6 bg-blue-50 rounded-2xl border border-blue-200">
-                <span class="text-blue-500 text-3xl mb-4 block">💖</span>
-                <h4 class="text-xl font-bold text-blue-600 mb-3">Super Cute</h4>
-                <p class="text-gray-600">Everything is designed to make you smile while being productive! 💕</p>
-            </div>
+    <!-- Empty State -->
+    {% if not recent_notes and not recent_todos %}
+    <div class="note-card p-12 rounded-2xl text-center">
+        <p class="text-2xl font-bold text-gray-600 mb-6">✨ Start Your Sparkly Journey! ✨</p>
+        <p class="text-gray-500 mb-8">You don't have any notes or todos yet. Create your first one!</p>
+        <div class="flex gap-4 justify-center">
+            <a href="{% url 'note_create' %}" class="btn-pink text-white px-6 py-3 rounded-lg font-semibold">
+                Create Note 📝
+            </a>
+            <a href="{% url 'todo_create' %}" class="btn-pink text-white px-6 py-3 rounded-lg font-semibold">
+                Create Todo ✅
+            </a>
         </div>
     </div>
-
-    <!-- Quick Stats -->
-    <div class="mt-12 text-center">
-        <div class="inline-flex space-x-8 text-pink-600">
-            <div class="text-center">
-                <div class="text-3xl font-bold">🎀</div>
-                <div class="text-sm">Super Cute</div>
-            </div>
-            <div class="text-center">
-                <div class="text-3xl font-bold">🌈</div>
-                <div class="text-sm">Colorful</div>
-            </div>
-            <div class="text-center">
-                <div class="text-3xl font-bold">✨</div>
-                <div class="text-sm">Magical</div>
-            </div>
-            <div class="text-center">
-                <div class="text-3xl font-bold">💖</div>
-                <div class="text-sm">Lovely</div>
-            </div>
-        </div>
-    </div>
+    {% endif %}
 </div>
 {% endblock %}

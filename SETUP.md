@@ -2,7 +2,7 @@
 
 ## Prerequisites
 - Python 3.8+
-- PostgreSQL (optional - SQLite used by default)
+- SQLite used by default (PostgreSQL Optional)
 - Node.js (for Tailwind CSS)
 
 ## Installation

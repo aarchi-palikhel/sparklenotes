@@ -37,14 +37,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'notes',
-
-    # third party apps
+    'django_browser_reload',  # Add this early
     'tailwind',
     'theme',
-    'django_browser_reload',
-
+    'notes',
+    'accounts',
 ]
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'login'
 
 TAILWIND_APP_NAME = 'theme'
 INTERNAL_IPS = ['127.0.0.1']
@@ -59,7 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_browser_reload.middleware.BrowserReloadMiddleware',
+    'django_browser_reload.middleware.BrowserReloadMiddleware',  # Add this
 ]
 
 ROOT_URLCONF = 'notes_project.urls'
@@ -87,12 +89,8 @@ WSGI_APPLICATION = 'notes_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'your_db',
-        'USER': 'your_name',
-        'PASSWORD': 'your_password',
-        'HOST': 'localhost',
-        'PORT': 'default',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 

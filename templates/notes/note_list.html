@@ -37,7 +37,7 @@
             <div class="flex justify-between items-start mb-4">
                 <h3 class="text-2xl font-bold text-pink-700">{{ note.title }}</h3>
                 <div class="flex space-x-2">
-                    <form method="post" action="{% url 'summarize_note' note.id %}" style="display: inline;">
+                    <form method="post" action="{% url 'summarize_note' note.id %}" class="summarize-form">
                         {% csrf_token %}
                         <button type="submit" class="bg-linear-to-r from-purple-400 to-pink-400 text-white px-4 py-2 rounded-full text-sm font-semibold hover:shadow-lg transition duration-300 flex items-center">
                             <span class="mr-1">✨</span>Sparkle Summary

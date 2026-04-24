@@ -14,7 +14,7 @@ A cute, girly note-taking app with AI integration built with Django and Tailwind
 
 - **Backend**: Django 5.2
 - **Frontend**: Tailwind CSS
-- **Database**: PostgreSQL / SQLite
+- **Database**: SQLite / PostgreSQL 
 - **AI**: Google Gemini API
 - **Styling**: Custom CSS with gradients and animations
 
