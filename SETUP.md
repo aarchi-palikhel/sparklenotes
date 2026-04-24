@@ -16,7 +16,10 @@
 2. **Create virtual environment**
    ```bash
    python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   # On Mac/Linux:
+   source venv/bin/activate
+   # On Windows:
+   venv\Scripts\activate
    ```
 
 3. **Install dependencies**
@@ -66,7 +69,7 @@
 ## Getting API Keys
 
 ### Gemini AI API
-1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey)
+1. Go to [Google AI Studio]
 2. Create a new API key
 3. Add it to your `.env` file
 
