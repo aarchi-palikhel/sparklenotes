@@ -1,48 +1,135 @@
 {% extends 'notes/base.html' %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto">
-    <div class="note-card p-8 rounded-2xl">
-        <h2 class="text-3xl font-bold sparkle-text mb-8">My Profile 👤</h2>
-
-        <form method="post" enctype="multipart/form-data" class="space-y-6">
-            {% csrf_token %}
-
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">First Name</label>
-                    {{ form.first_name }}
+<div class="max-w-5xl mx-auto">
+    <!-- Profile Header Card -->
+    <div class="note-card p-8 rounded-3xl mb-8">
+        <div class="flex items-start justify-between mb-8">
+            <!-- Profile Info Section -->
+            <div class="flex items-start gap-6 flex-1">
+                <!-- Profile Picture Circle -->
+                <div class="flex-shrink-0">
+                    {% if user_profile.avatar %}
+                        <img src="{{ user_profile.avatar.url }}" alt="{{ user.username }}" class="w-24 h-24 rounded-full object-cover border-4 border-pink-400 shadow-lg">
+                    {% else %}
+                        <div class="w-24 h-24 rounded-full bg-gradient-to-br from-pink-300 to-purple-300 flex items-center justify-center text-4xl border-4 border-pink-400 shadow-lg font-bold">
+                            {{ user.username|first|upper }}
+                        </div>
+                    {% endif %}
                 </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Last Name</label>
-                    {{ form.last_name }}
+
+                <!-- Name and Email -->
+                <div class="flex-grow pt-2">
+                    <div class="mb-4">
+                        <p class="text-gray-600 text-sm font-semibold mb-1">Welcome back 👋</p>
+                        <h1 class="text-3xl font-bold sparkle-text">
+                            {% if user.first_name and user.last_name %}
+                                {{ user.first_name }} {{ user.last_name }}
+                            {% else %}
+                                {{ user.username }}
+                            {% endif %}
+                        </h1>
+                        <p class="text-gray-600 text-sm mt-1">@{{ user.username }}</p>
+                    </div>
+                    
+                    <!-- Contact Info -->
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2 text-gray-700">
+                            <span>📧</span>
+                            <p class="text-sm">{{ user.email }}</p>
+                        </div>
+                        <div class="flex items-center gap-2 text-gray-700">
+                            <span>📅</span>
+                            <p class="text-sm">Joined {{ user.date_joined|date:"M d, Y" }}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
-                {{ form.email }}
-            </div>
+            <!-- Edit Button -->
+            <a href="{% url 'accounts:profile_edit' %}" class="btn-pink text-white px-6 py-2 rounded-xl font-semibold flex items-center gap-2 hover:shadow-lg transition transform hover:-translate-y-1 whitespace-nowrap">
+                ✏️ Edit
+            </a>
+        </div>
 
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Bio</label>
-                {{ form.bio }}
+        <!-- Stats Row - Clickable -->
+        <div class="flex items-center justify-around pt-6 border-t-2 border-pink-200">
+            <!-- Notes Stat -->
+            <a href="{% url 'note_list' %}" class="text-center py-4 px-4 flex-1 hover:bg-white hover:bg-opacity-30 rounded-lg transition transform hover:-translate-y-1 cursor-pointer">
+                <p class="text-3xl font-bold sparkle-text">{{ user.notes.count }}</p>
+                <p class="text-gray-600 text-sm font-semibold mt-1">📝 Notes</p>
+            </a>
+            <div class="w-px h-12 bg-pink-200"></div>
+            
+            <!-- Todos Stat -->
+            <a href="{% url 'todo_list' %}" class="text-center py-4 px-4 flex-1 hover:bg-white hover:bg-opacity-30 rounded-lg transition transform hover:-translate-y-1 cursor-pointer">
+                <p class="text-3xl font-bold text-purple-600">{{ user.todos.count }}</p>
+                <p class="text-gray-600 text-sm font-semibold mt-1">✅ Todos</p>
+            </a>
+            <div class="w-px h-12 bg-pink-200"></div>
+            
+            <!-- Completed Stat -->
+            <div class="text-center py-4 px-4 flex-1">
+                <p class="text-3xl font-bold text-green-600">{{ completed_todos }}</p>
+                <p class="text-gray-600 text-sm font-semibold mt-1">🎉 Completed</p>
             </div>
+        </div>
+    </div>
 
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Profile Picture</label>
-                {{ form.avatar }}
-            </div>
+    <!-- Bio Section -->
+    {% if user_profile.bio %}
+    <div class="todo-card p-8 rounded-3xl mb-8">
+        <h3 class="text-2xl font-bold text-purple-600 mb-4">✨ About Me</h3>
+        <p class="text-gray-700 text-lg leading-relaxed">{{ user_profile.bio }}</p>
+    </div>
+    {% endif %}
 
-            <div class="flex gap-4">
-                <button type="submit" class="btn-pink text-white px-6 py-3 rounded-lg font-semibold">
-                    Save Changes ✨
-                </button>
-                <a href="{% url 'home' %}" class="bg-gray-400 hover:bg-gray-500 text-white px-6 py-3 rounded-lg font-semibold">
-                    Back
-                </a>
+    <!-- Activity Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <!-- Recent Notes -->
+        {% if user.notes.all|length > 0 %}
+        <div class="note-card p-6 rounded-2xl">
+            <h4 class="text-xl font-bold text-purple-600 mb-4">📚 Recent Notes</h4>
+            <div class="space-y-3">
+                {% for note in user.notes.all|slice:":3" %}
+                <div class="bg-white bg-opacity-50 p-3 rounded-lg hover:bg-opacity-75 transition">
+                    <p class="font-semibold text-gray-800 text-sm truncate">{{ note.title }}</p>
+                    <p class="text-xs text-gray-500 mt-1">{{ note.created_at|date:"M d, Y" }}</p>
+                </div>
+                {% endfor %}
             </div>
-        </form>
+        </div>
+        {% endif %}
+
+        <!-- Recent Todos -->
+        {% if user.todos.all|length > 0 %}
+        <div class="todo-card p-6 rounded-2xl">
+            <h4 class="text-xl font-bold text-purple-600 mb-4">⚡ Recent Todos</h4>
+            <div class="space-y-3">
+                {% for todo in user.todos.all|slice:":3" %}
+                <div class="bg-white bg-opacity-50 p-3 rounded-lg hover:bg-opacity-75 transition">
+                    <div class="flex items-center gap-2">
+                        <span class="{% if todo.completed %}text-green-600{% else %}text-yellow-600{% endif %}">
+                            {% if todo.completed %}✅{% else %}⏳{% endif %}
+                        </span>
+                        <p class="font-semibold text-gray-800 text-sm truncate {% if todo.completed %}line-through text-gray-500{% endif %}">{{ todo.title }}</p>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">{{ todo.created_at|date:"M d, Y" }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-wrap items-center justify-center gap-6 pb-8">
+        <a href="{% url 'note_create' %}" class="btn-pink text-white px-8 py-3 rounded-xl font-bold hover:shadow-lg transition transform hover:-translate-y-1 flex items-center gap-2 whitespace-nowrap">
+            <span>➕</span> New Note
+        </a>
+        <a href="{% url 'todo_create' %}" class="btn-pink text-white px-8 py-3 rounded-xl font-bold hover:shadow-lg transition transform hover:-translate-y-1 flex items-center gap-2 whitespace-nowrap">
+            <span>➕</span> New Todo
+        </a>
     </div>
 </div>
 {% endblock %}

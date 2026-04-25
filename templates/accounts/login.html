@@ -1,35 +1,115 @@
 {% extends 'notes/base.html' %}
 
 {% block content %}
-<div class="max-w-md mx-auto mt-10">
-    <div class="note-card p-8 rounded-2xl">
-        <div class="text-center mb-8">
-            <h2 class="text-3xl font-bold sparkle-text mb-2">Login 💕</h2>
-            <p class="text-gray-600">Welcome back to SparkleNotes!</p>
+<div class="min-h-screen flex items-center justify-center px-4 py-8">
+    <div class="w-full max-w-sm">
+        <!-- Card -->
+        <div class="note-card p-8 rounded-3xl shadow-2xl backdrop-blur-sm">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="inline-block bg-gradient-to-br from-pink-300 to-purple-300 dark:from-pink-600 dark:to-purple-600 p-3 rounded-full mb-4 shadow-lg">
+                    <span class="text-3xl" title="Heart icon">💕</span>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold sparkle-text mb-2">Welcome Back!</h1>
+                <p class="text-gray-600 dark:text-gray-300 text-sm md:text-base">Login to your SparkleNotes account</p>
+            </div>
+
+            <!-- Form -->
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                
+                <!-- Error Messages -->
+                {% if form.non_field_errors %}
+                    <div class="bg-red-100 dark:bg-red-900 border-l-4 border-red-500 dark:border-red-400 text-red-700 dark:text-red-200 px-4 py-3 rounded-lg" role="alert">
+                        {% for error in form.non_field_errors %}
+                            <p class="font-semibold text-sm">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Username Field -->
+                <div>
+                    <label class="block text-sm font-bold text-gray-400 dark:text-gray-300 mb-2 flex items-center gap-2">
+                    Username
+                    </label>
+                    <div class="relative">
+                        {{ form.username }}
+                    </div>
+                    {% if form.username.errors %}
+                        <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ form.username.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Password Field -->
+                <div>
+                    <label class="block text-sm font-bold text-gray-400 dark:text-gray-300 mb-2 flex items-center gap-2">
+                        Password
+                    </label>
+                    <div class="relative">
+                        <input type="password" name="password" id="passwordInput" 
+                            class="w-full px-4 py-3 pr-12 rounded-xl border-2 border-pink-300 dark:border-pink-600 dark:bg-gray-800 dark:text-white focus:border-pink-500 dark:focus:border-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-200 dark:focus:ring-pink-700 transition duration-300" 
+                            placeholder="Enter your password" 
+                            required
+                            aria-label="Password">
+                        <button type="button" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition" onclick="togglePasswordVisibility('passwordInput', 'eyeIcon')" title="Toggle password visibility">
+                            <span id="eyeIcon" class="text-lg">👁️</span>
+                        </button>
+                    </div>
+                    {% if form.password.errors %}
+                        <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ form.password.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Remember Me & Forgot Password -->
+                <div class="flex items-center justify-between pt-2">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="remember_me" class="w-4 h-4 rounded border-2 border-pink-300 dark:border-pink-600 dark:bg-gray-800 cursor-pointer accent-pink-500">
+                        <span class="text-xs text-gray-400 dark:text-gray-400 font-medium"> Remember me</span>
+                    </label>
+                    <a href="#" class="text-xs text-pink-500 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 font-semibold transition" title="Forgot password">Forgot password?</a>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-pink text-white px-6 py-3 rounded-xl font-bold w-full text-base hover:shadow-xl transition duration-300 transform hover:-translate-y-1 mt-6">
+                    Login <span title="Sparkle icon">✨</span>
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="flex items-center gap-3 my-6">
+                <div class="flex-1 h-px bg-gray-300 dark:bg-gray-600"></div>
+                <span class="text-gray-500 dark:text-gray-400 text-xs font-medium">OR</span>
+                <div class="flex-1 h-px bg-gray-300 dark:bg-gray-600"></div>
+            </div>
+
+            <!-- Register Link -->
+            <p class="text-center text-gray-700 dark:text-gray-300 text-sm">
+                Don't have an account? 
+                <a href="{% url 'accounts:register' %}" class="text-pink-600 dark:text-pink-400 font-bold hover:text-pink-700 dark:hover:text-pink-300 transition">
+                    Create one! <span title="Party icon">🎉</span>
+                </a>
+            </p>
         </div>
 
-        <form method="post" class="space-y-6">
-            {% csrf_token %}
-            
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Username</label>
-                {{ form.username }}
-            </div>
-
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
-                {{ form.password }}
-            </div>
-
-            <button type="submit" class="btn-pink text-white px-6 py-3 rounded-lg font-semibold w-full">
-                Login ✨
-            </button>
-        </form>
-
-        <p class="text-center mt-6 text-gray-600">
-            Don't have an account? 
-            <a href="{% url 'accounts:register' %}" class="text-pink-500 font-semibold hover:text-pink-700">Register here</a>
+        <!-- Footer Text -->
+        <p class="text-center text-gray-500 dark:text-gray-400 text-xs mt-6">
+            <span title="Lock icon">🔒</span> Your notes are safe and secure with us
         </p>
     </div>
 </div>
+
+<script>
+function togglePasswordVisibility(inputId, iconId) {
+    const passwordInput = document.getElementById(inputId);
+    const eyeIcon = document.getElementById(iconId);
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.textContent = '🙈';
+    } else {
+        passwordInput.type = 'password';
+        eyeIcon.textContent = '👁️';
+    }
+}
+</script>
 {% endblock %}

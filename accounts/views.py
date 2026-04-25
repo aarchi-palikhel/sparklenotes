@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -51,14 +51,29 @@ def login_view(request):
     
     return render(request, 'accounts/login.html', {'form': form})
 
-@login_required(login_url='login')
+@login_required(login_url='accounts:login')
 def logout_view(request):
     logout(request)
     messages.success(request, '👋 You have been logged out. See you soon!')
-    return redirect('login')
+    return redirect('accounts:login')
 
-@login_required(login_url='login')
+@login_required(login_url='accounts:login')
 def profile(request):
+    try:
+        user_profile = request.user.profile
+    except UserProfile.DoesNotExist:
+        user_profile = UserProfile.objects.create(user=request.user)
+    
+    completed_todos = request.user.todos.filter(completed=True).count()
+    
+    context = {
+        'user_profile': user_profile,
+        'completed_todos': completed_todos,
+    }
+    return render(request, 'accounts/profile.html', context)
+
+@login_required(login_url='accounts:login')
+def profile_edit(request):
     try:
         user_profile = request.user.profile
     except UserProfile.DoesNotExist:
@@ -73,7 +88,7 @@ def profile(request):
             request.user.save()
             form.save()
             messages.success(request, '✨ Profile updated successfully!')
-            return redirect('profile')
+            return redirect('accounts:profile')
     else:
         form = UserProfileForm(instance=user_profile, initial={
             'first_name': request.user.first_name,
@@ -85,4 +100,4 @@ def profile(request):
         'form': form,
         'user_profile': user_profile
     }
-    return render(request, 'accounts/profile.html', context)
+    return render(request, 'accounts/profile_edit.html', context)

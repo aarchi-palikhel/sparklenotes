@@ -1,0 +1,148 @@
+{% extends 'notes/base.html' %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <!-- Header Section -->
+    <div class="mb-12">
+        <div class="flex items-center gap-4 mb-4">
+            <div>
+                <h1 class="text-4xl font-bold sparkle-text">Edit Profile</h1>
+                <p class="text-gray-600 text-sm mt-1">Customize your profile and make it uniquely yours</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Message -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 px-6 py-4 rounded-xl mb-8 flex items-start gap-3" role="alert">
+                <span class="text-2xl" title="Success icon">✅</span>
+                <p class="font-semibold">{{ message }}</p>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="space-y-8">
+        {% csrf_token %}
+
+        <!-- Profile Picture Section -->
+        <div class="note-card p-8 rounded-3xl">
+            <div class="flex items-center gap-3 mb-6">
+                <h4 class="text-2xl font-bold text-purple-600">Profile Picture</h4>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Current Picture -->
+                <div>
+                    <p class="text-sm font-semibold text-gray-700 mb-4">Current Picture</p>
+                    {% if user_profile.avatar %}
+                        <div class="relative">
+                            <img src="{{ user_profile.avatar.url }}" alt="Current profile picture of {{ user.username }}" title="Current profile picture" class="w-full h-64 rounded-2xl object-cover border-4 border-pink-300 shadow-lg">
+                            <div class="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/20 to-transparent" aria-hidden="true"></div>
+                        </div>
+                    {% else %}
+                        <div class="w-full h-64 rounded-2xl bg-gradient-to-br from-pink-200 to-purple-200 flex items-center justify-center text-6xl border-4 border-pink-300 shadow-lg" title="Default user avatar">
+                            👤
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Upload New Picture -->
+                <div>
+                    <p class="text-sm font-semibold text-gray-700 mb-4">Upload New Picture</p>
+                    <div class="border-2 border-dashed border-pink-300 rounded-2xl p-8 text-center hover:bg-pink-50 transition cursor-pointer">
+                        <input type="file" name="avatar" accept="image/*" class="hidden" id="avatarInput" onchange="previewImage(event)" aria-label="Upload profile picture">
+                        <label for="avatarInput" class="cursor-pointer block">
+                            <p class="text-4xl mb-3" title="Upload icon">📤</p>
+                            <p class="font-semibold text-gray-700 mb-2">Click to upload or drag and drop</p>
+                            <p class="text-xs text-gray-600">JPG, PNG, GIF (Max 5MB)</p>
+                        </label>
+                    </div>
+                    <div id="previewContainer" class="mt-4 hidden">
+                        <p class="text-sm font-semibold text-gray-700 mb-2">Preview</p>
+                        <img id="previewImage" alt="Preview of uploaded profile picture" title="Image preview" class="w-full h-48 rounded-xl object-cover border-2 border-pink-300">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Personal Information -->
+        <div class="todo-card p-8 rounded-3xl">
+            <div class="flex items-center gap-3 mb-6">
+                <h3 class="text-2xl font-bold text-purple-400">Personal Information</h3>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label class="block text-sm font-bold text-gray-500 mb-3 flex items-center gap-2">
+                        First Name
+                    </label>
+                    <input type="text" name="first_name" value="{{ user.first_name }}" class="w-full px-5 py-3 rounded-xl border-2 border-pink-300 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200 transition duration-300" placeholder="Enter your first name" aria-label="First name">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-500 mb-3 flex items-center gap-2">
+                       Last Name
+                    </label>
+                    <input type="text" name="last_name" value="{{ user.last_name }}" class="w-full px-5 py-3 rounded-xl border-2 border-pink-300 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200 transition duration-300" placeholder="Enter your last name" aria-label="Last name">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-gray-500 mb-3 flex items-center gap-2">
+                    Email Address
+                </label>
+                <input type="email" name="email" value="{{ user.email }}" class="w-full px-5 py-3 rounded-xl border-2 border-pink-300 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200 transition duration-300" placeholder="Enter your email" aria-label="Email address">
+            </div>
+        </div>
+
+        <!-- Bio Section -->
+        <div class="note-card p-8 rounded-3xl">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="text-3xl" title="Sparkle icon">✨</span>
+                <h3 class="text-2xl font-bold text-purple-600">About You</h3>
+            </div>
+            <label class="block text-sm font-bold text-gray-400 mb-3">Tell us about yourself</label>
+            <textarea name="bio" rows="5" class="w-full px-5 py-3 rounded-xl border-2 border-pink-300 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200 transition duration-300 resize-none" placeholder="Share something about yourself..." aria-label="Bio">{{ user_profile.bio }}</textarea>
+            <p class="text-xs text-gray-600 mt-2 flex items-center gap-2">
+                <span title="Lightbulb icon">💡</span> Maximum 500 characters
+            </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12 mb-12">
+            <button type="submit" class="btn-pink text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl transition transform hover:-translate-y-1 flex items-center justify-center gap-3 w-full" title="Save your profile changes">
+                Save Changes
+            </button>
+            <a href="{% url 'accounts:profile' %}" class="btn-pink text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl transition transform hover:-translate-y-1 flex items-center justify-center gap-3 w-full text-center" title="Cancel and return to profile">
+                Cancel
+            </a>
+        </div>
+
+        <!-- Footer Info -->
+         <div class="text-center pt-8">
+            <p class="text-gray-600 text-sm mb-3">
+                <span title="Calendar icon">📅</span> Member since <span class="font-bold text-purple-600">{{ user.date_joined|date:"F d, Y" }}</span>
+            </p>
+            <p class="text-gray-500 text-xs">
+                🔒 All changes are saved securely to your account
+            </p>
+        </div>
+    </form>
+</div>
+
+<script>
+function previewImage(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const previewContainer = document.getElementById('previewContainer');
+            const previewImage = document.getElementById('previewImage');
+            previewImage.src = e.target.result;
+            previewContainer.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+    }
+}
+</script>
+{% endblock %}
