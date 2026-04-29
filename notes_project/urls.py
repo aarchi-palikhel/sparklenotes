@@ -18,8 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
+
+# Point Django admin logout to our custom login page
+admin.site.logout_template = None  # use default redirect behaviour
 
 urlpatterns = [
+    path('admin/logout/', auth_views.LogoutView.as_view(next_page='accounts:login'), name='admin-logout'),
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('', include('notes.urls')),
@@ -31,5 +36,4 @@ if 'django_browser_reload' in settings.INSTALLED_APPS:
     ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.BASE_DIR / 'static')

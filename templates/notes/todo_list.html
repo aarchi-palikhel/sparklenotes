@@ -3,25 +3,25 @@
 {% block content %}
 <div class="max-w-4xl mx-auto">
     <!-- Header -->
-    <div class="flex justify-between items-center mb-8">
+    <div class="flex flex-wrap gap-4 justify-between items-center mb-8">
         <div>
             <h2 class="text-4xl font-bold sparkle-text mb-2">Your Sparkly To-dos ✅</h2>
             <p class="text-gray-600">Check off your tasks and feel amazing! You're doing great! 🌟</p>
         </div>
-        <a href="{% url 'todo_create' %}" class="btn-pink text-white px-6 py-3 rounded-full font-semibold shadow-lg">
+        <a href="{% url 'todo_create' %}" class="btn-pink text-white px-6 py-3 rounded-full font-semibold shadow-lg whitespace-nowrap">
             <span class="mr-2">+</span>New Todo
         </a>
     </div>
 
     <!-- AI Suggestion Section -->
     <div class="todo-card p-6 rounded-2xl mb-8">
-        <h3 class="text-2xl font-bold text-purple-600 mb-4 flex items-center">
+        <h3 class="text-xl font-bold text-purple-600 mb-4 flex items-center">
             <span class="mr-3">🤖</span>Get Magical Task Suggestions! ✨
         </h3>
-        <div class="flex space-x-3 mb-3">
-            <input type="text" id="task_description" placeholder="What's your main task, cutie? 🎀..." 
-                   class="flex-1 p-4 border-2 border-pink-200 rounded-2xl focus:border-pink-400 focus:ring-2 focus:ring-pink-200 outline-none text-lg">
-            <button onclick="suggestTodo()" class="bg-linear-to-r from-purple-500 to-pink-500 text-white px-6 py-4 rounded-2xl font-semibold hover:shadow-lg transition duration-300 flex items-center">
+        <div class="flex flex-col sm:flex-row gap-3 mb-3">
+            <input type="text" id="task_description" placeholder="What's your main task, cutie? 🎀..."
+                   class="flex-1 p-4 border-2 border-pink-200 rounded-2xl focus:border-pink-400 outline-none text-base">
+            <button onclick="suggestTodo()" class="bg-linear-to-r from-purple-500 to-pink-500 text-white px-6 py-4 rounded-2xl font-semibold hover:shadow-lg transition duration-300 flex items-center justify-center whitespace-nowrap">
                 <span class="mr-2">✨</span>Sparkle!
             </button>
         </div>

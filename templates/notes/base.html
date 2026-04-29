@@ -8,18 +8,16 @@
     {% tailwind_css %}
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
-        
-        * {
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
 
-        /* Dark Mode Styles */
+        * { box-sizing: border-box; }
+
         :root {
             --bg-primary: #fff;
             --bg-secondary: #f8f9fa;
             --text-primary: #1a1a1a;
             --text-secondary: #666;
-            --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --card-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            --sidebar-w: 260px;
         }
 
         body.dark-mode {
@@ -27,261 +25,262 @@
             --bg-secondary: #16213e;
             --text-primary: #eee;
             --text-secondary: #aaa;
-            --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --card-shadow: 0 8px 24px rgba(0,0,0,0.4);
         }
-        
+
+        /* ── Animations ─────────────────────────────────────── */
         @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
+        @keyframes spin    { to { transform: rotate(360deg); } }
+        @keyframes pulse   { 0%,100% { opacity:1; } 50% { opacity:.5; } }
         @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity:0; transform:translateY(-10px); }
+            to   { opacity:1; transform:translateY(0); }
         }
-
         @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); }
+            0%,100% { transform:translateY(0); }
+            50%     { transform:translateY(-5px); }
+        }
+        @keyframes slideIn {
+            from { transform:translateX(-100%); }
+            to   { transform:translateX(0); }
         }
 
-        .sparkle-text {
-            background: linear-gradient(45deg, #ff6b6b, #ff8e8e, #ffb6c1, #ff69b4);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-size: 400% 400%;
-            animation: gradient 3s ease infinite;
+        /* ── Typography ─────────────────────────────────────── */
+        body {
+            font-family: 'Comic Neue', cursive;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        .spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 154, 158, 0.3);
-            border-radius: 50%;
-            border-top-color: #ff9a9e;
-            animation: spin 0.8s linear infinite;
+        h1 { font-size: clamp(1.6rem, 4vw, 2.5rem); font-weight:700; letter-spacing:1px; }
+        h2 { font-size: clamp(1.3rem, 3vw, 2rem);   font-weight:700; margin:1.5rem 0 1rem; }
+        h3 { font-size: clamp(1.1rem, 2.5vw, 1.5rem); font-weight:600; margin:1rem 0 .75rem; }
+        p  { font-size:1.05rem; line-height:1.6; color:var(--text-secondary); }
+
+        /* ── Layout shell ───────────────────────────────────── */
+        .layout {
+            display: flex;
+            flex: 1;
+            min-height: 100vh;
         }
 
-        .pulse-animation {
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        .float-animation {
-            animation: float 3s ease-in-out infinite;
-        }
-
-        .slide-animation {
-            animation: slideDown 0.3s ease;
-        }
-        
-        .sparkle-header {
+        /* ── Sidebar ────────────────────────────────────────── */
+        .sidebar {
+            width: var(--sidebar-w);
+            min-height: 100vh;
             background: linear-gradient(180deg, #ff9a9e, #fad0c4, #fad0c4, #a1c4fd);
             background-size: 400% 400%;
             animation: gradient 15s ease infinite;
-            box-shadow: 4px 0 20px rgba(255, 154, 158, 0.3);
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 280px;
-            height: 100vh;
-            z-index: 50;
+            box-shadow: 4px 0 20px rgba(255,154,158,0.3);
             display: flex;
             flex-direction: column;
-            padding: 0;
             justify-content: space-between;
             align-items: center;
+            position: fixed;
+            top: 0; left: 0;
+            height: 100vh;
+            z-index: 100;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
         }
 
-        body.dark-mode .sparkle-header {
+        body.dark-mode .sidebar {
             background: linear-gradient(180deg, #2a2a4e, #3a3a5e, #2a3a5e, #1a2a4e);
-            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.5);
+            box-shadow: 4px 0 20px rgba(0,0,0,0.5);
         }
 
-        .sidebar-content {
+        .sidebar-inner {
             display: flex;
             flex-direction: column;
             padding: 30px 20px;
-            gap: 40px;
+            gap: 36px;
+            width: 100%;
         }
 
         .sidebar-logo {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .logo-icon {
-            width: 60px;
-            height: 60px;
+            width: 56px; height: 56px;
             background: white;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            float-animation: float-animation 3s ease-in-out infinite;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: float 3s ease-in-out infinite;
         }
 
         .sidebar-logo h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
+            font-size: 1.6rem;
             color: white;
             text-align: center;
             letter-spacing: 1px;
+            margin: 0;
         }
 
         .nav-links {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 8px;
         }
 
         .nav-links a {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 14px;
             color: white;
             text-decoration: none;
-            font-size: 1.1rem;
-            padding: 12px 16px;
+            font-size: 1.05rem;
+            padding: 11px 14px;
             border-radius: 12px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
             position: relative;
         }
 
         .nav-links a::before {
             content: '';
             position: absolute;
-            left: 0;
-            top: 0;
-            width: 4px;
-            height: 100%;
+            left: 0; top: 0;
+            width: 4px; height: 100%;
             background: white;
             border-radius: 0 4px 4px 0;
             transform: scaleY(0);
-            transition: transform 0.3s ease;
+            transition: transform 0.25s ease;
         }
 
         .nav-links a:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateX(8px);
+            background: rgba(255,255,255,0.2);
+            transform: translateX(6px);
         }
 
-        .nav-links a:hover::before {
-            transform: scaleY(1);
-        }
+        .nav-links a:hover::before { transform: scaleY(1); }
+        .nav-links span:first-child { font-size: 1.4rem; min-width: 28px; }
 
-        .nav-links span:first-child {
-            font-size: 1.5rem;
-            min-width: 30px;
-        }
-
-        .hamburger {
-            display: none;
-            flex-direction: column;
+        .theme-toggle {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            width: 46px; height: 46px;
+            border-radius: 50%;
             cursor: pointer;
-            gap: 5px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem;
+            transition: all 0.3s ease;
+            margin-bottom: 24px;
+            flex-shrink: 0;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(20deg) scale(1.1);
+        }
+
+        /* ── Overlay (mobile) ───────────────────────────────── */
+        .sidebar-overlay {
+            display: none;
             position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 60;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 99;
+        }
+
+        .sidebar-overlay.active { display: block; }
+
+        /* ── Top bar (mobile only) ──────────────────────────── */
+        .topbar {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 56px;
+            background: linear-gradient(90deg, #ff9a9e, #fad0c4);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            z-index: 98;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            box-shadow: 0 2px 12px rgba(255,154,158,0.4);
+        }
+
+        body.dark-mode .topbar {
+            background: linear-gradient(90deg, #2a2a4e, #3a3a5e);
+        }
+
+        .topbar-logo {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 0.5px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .topbar .theme-toggle {
+            width: 36px; height: 36px;
+            font-size: 1.1rem;
+            margin-bottom: 0;
+        }
+
+        /* ── Hamburger ──────────────────────────────────────── */
+        .hamburger {
             background: none;
             border: none;
-            padding: 10px;
+            cursor: pointer;
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
 
         .hamburger span {
-            width: 25px;
-            height: 3px;
-            background: #ff9a9e;
+            display: block;
+            width: 24px; height: 3px;
+            background: white;
             border-radius: 3px;
             transition: all 0.3s ease;
         }
 
-        .hamburger.active span:nth-child(1) {
-            transform: rotate(45deg) translate(10px, 10px);
-        }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
 
-        .hamburger.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .hamburger.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(7px, -7px);
-        }
-
-        .theme-toggle {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid white;
-            color: white;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            transition: all 0.3s ease;
-            margin-left: 0;
-            margin-bottom: 30px;
-        }
-
-        .theme-toggle:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: rotate(20deg) scale(1.1);
-        }
-
-        .theme-toggle:active {
-            transform: rotate(20deg) scale(0.95);
-        }
-
-        body {
-            font-family: 'Comic Neue', cursive;
-            background: var(--bg-primary);
-            color: var(--text-primary);
+        /* ── Main content ───────────────────────────────────── */
+        .main-wrap {
+            margin-left: var(--sidebar-w);
+            flex: 1;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            margin-left: 280px;
         }
 
         main {
-            flex-grow: 1;
+            flex: 1;
+            padding: 28px 24px;
         }
 
-        footer {
-            margin-left: -280px;
-            width: calc(100% + 280px);
-        }
-        
+        /* ── Cards ──────────────────────────────────────────── */
         .note-card {
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             border-radius: 16px;
             box-shadow: var(--card-shadow);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
         }
 
         body.dark-mode .note-card {
@@ -289,17 +288,16 @@
         }
 
         .note-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 32px rgba(255, 154, 158, 0.25);
+            transform: translateY(-6px);
+            box-shadow: 0 12px 32px rgba(255,154,158,0.25);
         }
-        
+
         .todo-card {
             background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
-            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             border-radius: 16px;
             box-shadow: var(--card-shadow);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
         }
 
         body.dark-mode .todo-card {
@@ -307,13 +305,14 @@
         }
 
         .todo-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 32px rgba(255, 200, 150, 0.25);
+            transform: translateY(-6px);
+            box-shadow: 0 12px 32px rgba(255,200,150,0.25);
         }
-        
+
+        /* ── Buttons ────────────────────────────────────────── */
         .btn-pink {
             background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
             border-radius: 12px;
             position: relative;
             overflow: hidden;
@@ -324,57 +323,50 @@
         .btn-pink::before {
             content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
-            transform: translate(-50%, -50%);
+            background: rgba(255,255,255,0.5);
+            transform: translate(-50%,-50%);
             transition: width 0.6s, height 0.6s;
         }
 
-        .btn-pink:active::before {
-            width: 300px;
-            height: 300px;
-        }
-        
-        .btn-pink:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(255, 154, 158, 0.4);
-        }
-
-        .btn-pink:active {
-            transform: translateY(0);
-        }
+        .btn-pink:active::before { width: 300px; height: 300px; }
+        .btn-pink:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255,154,158,0.4); }
+        .btn-pink:active { transform: translateY(0); }
 
         body.dark-mode .btn-pink {
             background: linear-gradient(135deg, #ff6b7a 0%, #ff8a9e 100%);
         }
 
-        /* Input and Form Styling */
+        /* ── Forms ──────────────────────────────────────────── */
         input[type="text"],
         input[type="email"],
         input[type="password"],
-        textarea,
-        select {
+        textarea, select {
             border-radius: 12px;
             border: 2px solid #ff9a9e;
             padding: 12px;
             transition: all 0.3s ease;
             background: var(--bg-secondary);
             color: var(--text-primary);
+            width: 100%;
         }
 
         input[type="text"]:focus,
         input[type="email"]:focus,
         input[type="password"]:focus,
-        textarea:focus,
-        select:focus {
+        textarea:focus, select:focus {
             outline: none;
             border-color: #ff69b4;
-            box-shadow: 0 0 0 3px rgba(255, 105, 180, 0.1);
-            transform: scale(1.02);
+            box-shadow: 0 0 0 3px rgba(255,105,180,0.1);
+        }
+
+        /* datetime-local needs native appearance to show the picker */
+        input[type="datetime-local"] {
+            appearance: auto;
+            -webkit-appearance: auto;
+            cursor: pointer;
         }
 
         body.dark-mode input[type="text"],
@@ -386,288 +378,280 @@
             color: #eee;
             border-color: #ff6b7a;
         }
-
-        /* Typography Hierarchy */
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        h2 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-top: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-top: 1rem;
-            margin-bottom: 0.75rem;
-        }
-
-        p {
-            font-size: 1.05rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
-
-        /* Message Alert Styling */
+        /* ── Alerts ─────────────────────────────────────────── */
         .alert-message {
             border-radius: 12px;
             border-left: 4px solid #10b981;
-            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             animation: slideDown 0.4s ease;
         }
 
         .success-message {
-            background: rgba(16, 185, 129, 0.1);
+            background: rgba(16,185,129,0.1);
             border-left-color: #10b981;
             color: #059669;
         }
 
         body.dark-mode .success-message {
-            background: rgba(16, 185, 129, 0.15);
+            background: rgba(16,185,129,0.15);
             color: #6ee7b7;
         }
-        
-        .summarize-form {
-            display: inline;
+
+        /* ── Misc ───────────────────────────────────────────── */
+        .sparkle-text {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e, #ffb6c1, #ff69b4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 400% 400%;
+            animation: gradient 3s ease infinite;
         }
 
+        .spinner {
+            display: inline-block;
+            width: 20px; height: 20px;
+            border: 3px solid rgba(255,154,158,0.3);
+            border-radius: 50%;
+            border-top-color: #ff9a9e;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .float-animation { animation: float 3s ease-in-out infinite; }
+        .slide-animation { animation: slideDown 0.3s ease; }
+        .summarize-form  { display: inline; }
+
+        /* ── Footer ─────────────────────────────────────────── */
         .sparkle-footer {
             background: linear-gradient(180deg, #ff9a9e, #fad0c4, #fad0c4, #a1c4fd);
             background-size: 400% 400%;
             animation: gradient 15s ease infinite;
-            border-top: 2px solid rgba(255, 255, 255, 0.3);
-            padding: 30px 20px;
+            border-top: 2px solid rgba(255,255,255,0.3);
+            padding: 24px 20px;
             text-align: center;
             color: white;
-            box-shadow: 0 -4px 20px rgba(255, 154, 158, 0.3);
+            box-shadow: 0 -4px 20px rgba(255,154,158,0.3);
         }
 
         body.dark-mode .sparkle-footer {
             background: linear-gradient(180deg, #2a2a4e, #3a3a5e, #2a3a5e, #1a2a4e);
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
         }
 
+        /* ── Mobile ─────────────────────────────────────────── */
         @media (max-width: 768px) {
-            body {
-                margin-left: 0;
+            .sidebar {
+                transform: translateX(-100%);
             }
 
-            .sparkle-header {
-                width: 100%;
-                height: auto;
-                padding: 80px 20px 20px;
+            .sidebar.open {
+                transform: translateX(0);
+                animation: slideIn 0.3s ease;
             }
 
-            .sidebar-content {
-                padding: 20px 0;
-                gap: 20px;
-            }
-
-            .sidebar-logo h1 {
-                font-size: 1.5rem;
-            }
-
-            .nav-links {
-                flex-direction: row;
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-
-            .hamburger {
+            .topbar {
                 display: flex;
             }
 
-            footer {
+            .main-wrap {
                 margin-left: 0;
-                width: 100%;
+                padding-top: 56px; /* topbar height */
             }
+
+            main {
+                padding: 20px 16px;
+            }
+
+            h1 { font-size: 1.8rem; }
+            h2 { font-size: 1.5rem; }
+            h3 { font-size: 1.2rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Sidebar Header -->
-    <nav class="sparkle-header">
-        <button class="hamburger" id="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
 
-        <div class="sidebar-content">
+<!-- ── Mobile top bar ──────────────────────────────────────── -->
+<header class="topbar" id="topbar">
+    <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+    </button>
+    <span class="topbar-logo">✨ SparkleNotes</span>
+    <div class="topbar-right">
+        <button class="theme-toggle" id="themeToggleMobile" title="Toggle Dark Mode">🌙</button>
+    </div>
+</header>
+
+<!-- ── Overlay ─────────────────────────────────────────────── -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ── Layout ──────────────────────────────────────────────── -->
+<div class="layout">
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar" aria-label="Main navigation">
+        <div class="sidebar-inner">
             <div class="sidebar-logo">
                 <div class="logo-icon">✨</div>
                 <h1>SparkleNotes</h1>
             </div>
-            
+
             <div class="nav-links">
                 {% if user.is_authenticated %}
-                    <a href="{% url 'home' %}" class="transition duration-300">
-                        <span>🏠</span>
-                        <span>Home</span>
-                    </a>
-                    <a href="{% url 'note_list' %}" class="transition duration-300">
-                        <span>📝</span>
-                        <span>Notes</span>
-                    </a>
-                    <a href="{% url 'todo_list' %}" class="transition duration-300">
-                        <span>✅</span>
-                        <span>Todos</span>
-                    </a>
-                    <a href="{% url 'accounts:profile' %}" class="transition duration-300">
-                        <span>👤</span>
-                        <span>Profile</span>
-                    </a>
-                    <a href="{% url 'accounts:logout' %}" class="transition duration-300">
-                        <span>🚪</span>
-                        <span>Logout</span>
-                    </a>
+                    <a href="{% url 'home' %}"><span>🏠</span><span>Home</span></a>
+                    <a href="{% url 'note_list' %}"><span>📝</span><span>Notes</span></a>
+                    <a href="{% url 'todo_list' %}"><span>✅</span><span>Todos</span></a>
+                    <a href="{% url 'accounts:profile' %}"><span>👤</span><span>Profile</span></a>
+                    <a href="{% url 'accounts:logout' %}"><span>🚪</span><span>Logout</span></a>
                 {% else %}
-                    <a href="{% url 'accounts:login' %}" class="transition duration-300">
-                        <span>🔓</span>
-                        <span>Login</span>
-                    </a>
-                    <a href="{% url 'accounts:register' %}" class="transition duration-300">
-                        <span>✨</span>
-                        <span>Register</span>
-                    </a>
+                    <a href="{% url 'accounts:login' %}"><span>🔓</span><span>Login</span></a>
+                    <a href="{% url 'accounts:register' %}"><span>✨</span><span>Register</span></a>
                 {% endif %}
             </div>
         </div>
 
-        <button class="theme-toggle" id="themeToggle" title="Toggle Dark Mode">
-            🌙
-        </button>
+        <button class="theme-toggle" id="themeToggle" title="Toggle Dark Mode">🌙</button>
     </nav>
 
-    <main>
-        <div class="container mx-auto p-6">
+    <!-- Main content -->
+    <div class="main-wrap">
+        <main>
             {% if messages %}
                 {% for message in messages %}
-                    <div class="alert-message success-message border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-lg shadow-md">
-                        <span class="mr-2">✅</span>{{ message }}
+                    <div class="alert-message success-message border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded-lg shadow-md flex justify-between items-start js-auto-dismiss">
+                        <span><span class="mr-2">✅</span>{{ message }}</span>
+                        <button onclick="this.closest('.js-auto-dismiss').remove()"
+                                class="ml-4 text-green-600 hover:text-green-800 text-xl leading-none font-bold shrink-0"
+                                aria-label="Dismiss">&times;</button>
                     </div>
                 {% endfor %}
             {% endif %}
 
-            {% block content %}
-            {% endblock %}
-        </div>
-    </main>
+            {% block content %}{% endblock %}
+        </main>
 
-    <!-- Cute Footer -->
-    <footer class="sparkle-footer">
-        <p class="text-lg font-semibold">Made with <span class="text-red-400 float-animation">💖</span> and sparkles ✨</p>
-        <p class="text-pink-100 mt-2">Your cute little note-taking companion</p>
-    </footer>
+        <footer class="sparkle-footer">
+            <p class="text-lg font-semibold">Made with <span class="text-red-400 float-animation">💖</span> and sparkles ✨</p>
+            <p class="text-pink-100 mt-1 text-sm">Your cute little note-taking companion</p>
+        </footer>
+    </div>
 
-    <script>
-        // Dark Mode Toggle
-        const themeToggle = document.getElementById('themeToggle');
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        
-        if (savedTheme === 'dark') {
-            document.body.classList.add('dark-mode');
-            themeToggle.textContent = '☀️';
-        }
+</div><!-- /.layout -->
 
-        themeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-            const isDark = document.body.classList.contains('dark-mode');
-            themeToggle.textContent = isDark ? '☀️' : '🌙';
+<script>
+    /* ── Theme ──────────────────────────────────────────────── */
+    const TOGGLES = [document.getElementById('themeToggle'), document.getElementById('themeToggleMobile')];
+    const savedTheme = localStorage.getItem('theme') || 'light';
+
+    function applyTheme(dark) {
+        document.body.classList.toggle('dark-mode', dark);
+        TOGGLES.forEach(t => { if (t) t.textContent = dark ? '☀️' : '🌙'; });
+    }
+
+    applyTheme(savedTheme === 'dark');
+
+    TOGGLES.forEach(btn => {
+        if (!btn) return;
+        btn.addEventListener('click', () => {
+            const isDark = document.body.classList.toggle('dark-mode');
+            TOGGLES.forEach(t => { if (t) t.textContent = isDark ? '☀️' : '🌙'; });
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
         });
+    });
 
-        // Mobile Menu Toggle
-        const hamburger = document.getElementById('hamburger');
-        const sidebar = document.querySelector('.sparkle-header');
+    /* ── Sidebar (mobile) ───────────────────────────────────── */
+    const hamburger = document.getElementById('hamburger');
+    const sidebar   = document.getElementById('sidebar');
+    const overlay   = document.getElementById('sidebarOverlay');
 
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            sidebar.style.transform = sidebar.style.transform === 'translateX(0px)' ? 'translateX(-280px)' : 'translateX(0px)';
+    function openSidebar() {
+        sidebar.classList.add('open');
+        overlay.classList.add('active');
+        hamburger.classList.add('active');
+        hamburger.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSidebar() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+        hamburger.classList.remove('active');
+        hamburger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+    }
+
+    hamburger.addEventListener('click', () => {
+        sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+    });
+
+    overlay.addEventListener('click', closeSidebar);
+
+    // Close sidebar when a nav link is tapped on mobile
+    sidebar.querySelectorAll('.nav-links a').forEach(a => {
+        a.addEventListener('click', () => {
+            if (window.innerWidth <= 768) closeSidebar();
         });
+    });
 
-        function summarizeNote(noteId) {
-            const button = event.target;
-            const originalText = button.innerHTML;
-            button.innerHTML = '<div class="spinner"></div> Summarizing...';
-            button.disabled = true;
+    /* ── Auto-dismiss messages ──────────────────────────────── */
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.js-auto-dismiss').forEach(el => {
+            setTimeout(() => {
+                el.style.transition = 'opacity 0.5s ease';
+                el.style.opacity = '0';
+                setTimeout(() => el.remove(), 500);
+            }, 10000);
+        });
+    });
 
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `/notes/${noteId}/summarize/`;
-            
-            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-            const csrfInput = document.createElement('input');
-            csrfInput.type = 'hidden';
-            csrfInput.name = 'csrfmiddlewaretoken';
-            csrfInput.value = csrfToken;
-            
-            form.appendChild(csrfInput);
-            document.body.appendChild(form);
-            form.submit();
+    /* ── AI Summary clear ───────────────────────────────────── */
+    function clearSummary() {
+        const csrf = document.querySelector('[name=csrfmiddlewaretoken]');
+        fetch('/clear-summary/', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrf ? csrf.value : '' }
+        }).then(() => {
+            const el = document.getElementById('ai-summary-box');
+            if (el) el.remove();
+        });
+    }
+
+    /* ── Todo AI suggest ────────────────────────────────────── */
+    function suggestTodo() {
+        const input = document.getElementById('task_description');
+        if (!input || !input.value.trim()) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-4 right-4 bg-pink-500 text-white p-4 rounded-lg shadow-lg z-50 slide-animation';
+            toast.textContent = '💕 Please enter a task description, cutie!';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+            return;
         }
 
-        function suggestTodo() {
-            const taskDescription = document.getElementById('task_description').value;
-            if (!taskDescription) {
-                const alert = document.createElement('div');
-                alert.className = 'fixed top-4 right-4 bg-pink-500 text-white p-4 rounded-lg shadow-lg z-50 slide-animation';
-                alert.innerHTML = '💕 Please enter a task description, cutie!';
-                document.body.appendChild(alert);
-                setTimeout(() => alert.remove(), 3000);
-                return;
+        document.getElementById('suggestions').innerHTML = `
+            <div class="text-center py-4">
+                <div class="spinner"></div>
+                <p class="text-pink-600 mt-3">Sparkling up some ideas... ✨</p>
+            </div>`;
+
+        const csrf = document.querySelector('[name=csrfmiddlewaretoken]');
+        fetch('/todos/suggest/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrf ? csrf.value : ''
+            },
+            body: 'task_description=' + encodeURIComponent(input.value)
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.suggestions) {
+                document.getElementById('suggestions').innerHTML = `
+                    <div class="bg-pink-50 rounded-2xl p-4 border-2 border-pink-200 slide-animation mt-3">
+                        <h3 class="text-lg font-bold text-purple-600 mb-3">✨ Sparkly Suggestions!</h3>
+                        <div class="text-gray-700 leading-relaxed bg-white p-4 rounded-lg border border-pink-100">${data.suggestions}</div>
+                    </div>`;
             }
-
-            document.getElementById('suggestions').innerHTML = `
-                <div class="text-center py-4">
-                    <div class="spinner"></div>
-                    <p class="text-pink-600 mt-3">Sparkling up some ideas... ✨</p>
-                </div>
-            `;
-
-            fetch('/todos/suggest/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                },
-                body: 'task_description=' + encodeURIComponent(taskDescription)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.suggestions) {
-                    document.getElementById('suggestions').innerHTML = `
-                        <div class="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-4 border-2 border-pink-200 slide-animation">
-                            <h3 class="text-lg font-bold text-purple-600 mb-3 flex items-center">
-                                <span class="mr-2">✨</span>Sparkly Suggestions for You!
-                            </h3>
-                            <div class="text-gray-700 leading-relaxed bg-white p-4 rounded-lg border border-pink-100">${data.suggestions}</div>
-                        </div>
-                    `;
-                }
-            });
-        }
-
-        function clearSummary() {
-            fetch('/clear-summary/', {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                }
-            }).then(() => {
-                const summaryElement = document.querySelector('.bg-gradient-to-r.from-purple-50');
-                if (summaryElement) {
-                    summaryElement.remove();
-                }
-            });
-        }
-    </script>
+        });
+    }
+</script>
 </body>
 </html>

@@ -24,6 +24,7 @@ class TodoItem(models.Model):
     completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     due_date = models.DateTimeField(null=True, blank=True)
+    reminder_sent = models.BooleanField(default=False)  # prevents duplicate overdue emails
 
     class Meta:
         ordering = ['-created_at']

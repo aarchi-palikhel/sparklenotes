@@ -1,148 +1,150 @@
 {% extends 'notes/base.html' %}
 
 {% block content %}
-<div class="max-w-3xl mx-auto">
-    <!-- Header Section -->
-    <div class="mb-12">
-        <div class="flex items-center gap-4 mb-4">
-            <div>
-                <h1 class="text-4xl font-bold sparkle-text">Edit Profile</h1>
-                <p class="text-gray-600 text-sm mt-1">Customize your profile and make it uniquely yours</p>
-            </div>
-        </div>
+<div class="max-w-3xl mx-auto px-2">
+
+    <!-- Header -->
+    <div style="margin-bottom:20px;">
+        <h1 class="font-bold sparkle-text" style="font-size:clamp(1.5rem,5vw,2.2rem);">Edit Profile ✏️</h1>
+        <p class="text-gray-500 text-sm mt-1">Customize your profile and make it uniquely yours</p>
     </div>
 
-    <!-- Success Message -->
-    {% if messages %}
-        {% for message in messages %}
-            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 px-6 py-4 rounded-xl mb-8 flex items-start gap-3" role="alert">
-                <span class="text-2xl" title="Success icon">✅</span>
-                <p class="font-semibold">{{ message }}</p>
-            </div>
-        {% endfor %}
-    {% endif %}
-
-    <form method="post" enctype="multipart/form-data" class="space-y-8">
+    <form method="post" enctype="multipart/form-data" style="display:flex; flex-direction:column; gap:20px;">
         {% csrf_token %}
 
-        <!-- Profile Picture Section -->
-        <div class="note-card p-8 rounded-3xl">
-            <div class="flex items-center gap-3 mb-6">
-                <h4 class="text-2xl font-bold text-purple-600">Profile Picture</h4>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Current Picture -->
+        <!-- ── Profile Picture ─────────────────────────────── -->
+        <div class="note-card rounded-3xl" style="padding:20px;">
+            <h4 class="font-bold text-purple-600 mb-4" style="font-size:1.1rem;">🖼️ Profile Picture</h4>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+
+                <!-- Current -->
                 <div>
-                    <p class="text-sm font-semibold text-gray-700 mb-4">Current Picture</p>
-                    {% if user_profile.avatar %}
-                        <div class="relative">
-                            <img src="{{ user_profile.avatar.url }}" alt="Current profile picture of {{ user.username }}" title="Current profile picture" class="w-full h-64 rounded-2xl object-cover border-4 border-pink-300 shadow-lg">
-                            <div class="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/20 to-transparent" aria-hidden="true"></div>
-                        </div>
+                    <p class="text-gray-600 font-semibold text-xs mb-2">Current</p>
+                    {% if user_profile.has_avatar %}
+                        <img src="{% url 'accounts:avatar' user.id %}"
+                             alt="Current profile picture"
+                             style="width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:16px; border:3px solid #f9a8d4; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
                     {% else %}
-                        <div class="w-full h-64 rounded-2xl bg-gradient-to-br from-pink-200 to-purple-200 flex items-center justify-center text-6xl border-4 border-pink-300 shadow-lg" title="Default user avatar">
+                        <div style="width:100%; aspect-ratio:1/1; border-radius:16px; background:linear-gradient(135deg,#fbcfe8,#e9d5ff); display:flex; align-items:center; justify-content:center; font-size:3rem; border:3px solid #f9a8d4;">
                             👤
                         </div>
                     {% endif %}
                 </div>
 
-                <!-- Upload New Picture -->
+                <!-- Upload -->
                 <div>
-                    <p class="text-sm font-semibold text-gray-700 mb-4">Upload New Picture</p>
-                    <div class="border-2 border-dashed border-pink-300 rounded-2xl p-8 text-center hover:bg-pink-50 transition cursor-pointer">
-                        <input type="file" name="avatar" accept="image/*" class="hidden" id="avatarInput" onchange="previewImage(event)" aria-label="Upload profile picture">
-                        <label for="avatarInput" class="cursor-pointer block">
-                            <p class="text-4xl mb-3" title="Upload icon">📤</p>
-                            <p class="font-semibold text-gray-700 mb-2">Click to upload or drag and drop</p>
-                            <p class="text-xs text-gray-600">JPG, PNG, GIF (Max 5MB)</p>
-                        </label>
+                    <p class="text-gray-600 font-semibold text-xs mb-2">Upload New</p>
+
+                    <input type="file" name="avatar" accept="image/*" id="avatarInput" style="display:none;" aria-label="Upload profile picture">
+
+                    <div id="dropZone"
+                         onclick="document.getElementById('avatarInput').click()"
+                         style="width:100%; aspect-ratio:1/1; border:2px dashed #f9a8d4; border-radius:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; padding:12px; text-align:center; box-sizing:border-box;">
+                        <div id="uploadDefault">
+                            <p style="font-size:2rem; margin-bottom:6px;">📤</p>
+                            <p style="font-size:0.75rem; font-weight:600; color:#374151; margin-bottom:2px;">Click to upload</p>
+                            <p style="font-size:0.65rem; color:#9ca3af;">JPG, PNG, GIF, WebP<br>Max 5MB</p>
+                        </div>
+                        <div id="uploadSelected" style="display:none;">
+                            <p style="font-size:2rem; margin-bottom:6px;">✅</p>
+                            <p style="font-size:0.75rem; font-weight:600; color:#db2777; margin-bottom:4px;">Selected!</p>
+                            <p id="uploadFilename" style="font-size:0.65rem; color:#ec4899; word-break:break-all;"></p>
+                        </div>
                     </div>
-                    <div id="previewContainer" class="mt-4 hidden">
-                        <p class="text-sm font-semibold text-gray-700 mb-2">Preview</p>
-                        <img id="previewImage" alt="Preview of uploaded profile picture" title="Image preview" class="w-full h-48 rounded-xl object-cover border-2 border-pink-300">
+
+                    <!-- Preview -->
+                    <div id="previewContainer" style="display:none; margin-top:10px;">
+                        <p style="font-size:0.72rem; font-weight:600; color:#374151; margin-bottom:4px;">Preview</p>
+                        <img id="previewImage" alt="Preview"
+                             style="width:100%; height:100px; object-fit:cover; border-radius:10px; border:2px solid #f9a8d4;">
                     </div>
                 </div>
+
             </div>
         </div>
 
-        <!-- Personal Information -->
-        <div class="todo-card p-8 rounded-3xl">
-            <div class="flex items-center gap-3 mb-6">
-                <h3 class="text-2xl font-bold text-purple-400">Personal Information</h3>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <!-- ── Personal Information ────────────────────────── -->
+        <div class="todo-card rounded-3xl" style="padding:20px;">
+            <h3 class="font-bold text-purple-500 mb-4" style="font-size:1.1rem;">👤 Personal Information</h3>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
                 <div>
-                    <label class="block text-sm font-bold text-gray-500 mb-3 flex items-center gap-2">
-                        First Name
-                    </label>
-                    <input type="text" name="first_name" value="{{ user.first_name }}" class="w-full px-5 py-3 rounded-xl border-2 border-pink-300 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200 transition duration-300" placeholder="Enter your first name" aria-label="First name">
+                    <label class="text-gray-500 font-bold text-xs" style="display:block; margin-bottom:6px;">First Name</label>
+                    <input type="text" name="first_name" value="{{ user.first_name }}"
+                           style="width:100%; padding:10px 12px; border:2px solid #f9a8d4; border-radius:10px; font-size:0.875rem; box-sizing:border-box; background:var(--bg-secondary); color:var(--text-primary);"
+                           placeholder="First name" aria-label="First name">
                 </div>
                 <div>
-                    <label class="block text-sm font-bold text-gray-500 mb-3 flex items-center gap-2">
-                       Last Name
-                    </label>
-                    <input type="text" name="last_name" value="{{ user.last_name }}" class="w-full px-5 py-3 rounded-xl border-2 border-pink-300 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200 transition duration-300" placeholder="Enter your last name" aria-label="Last name">
+                    <label class="text-gray-500 font-bold text-xs" style="display:block; margin-bottom:6px;">Last Name</label>
+                    <input type="text" name="last_name" value="{{ user.last_name }}"
+                           style="width:100%; padding:10px 12px; border:2px solid #f9a8d4; border-radius:10px; font-size:0.875rem; box-sizing:border-box; background:var(--bg-secondary); color:var(--text-primary);"
+                           placeholder="Last name" aria-label="Last name">
                 </div>
             </div>
 
             <div>
-                <label class="block text-sm font-bold text-gray-500 mb-3 flex items-center gap-2">
-                    Email Address
-                </label>
-                <input type="email" name="email" value="{{ user.email }}" class="w-full px-5 py-3 rounded-xl border-2 border-pink-300 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200 transition duration-300" placeholder="Enter your email" aria-label="Email address">
+                <label class="text-gray-500 font-bold text-xs" style="display:block; margin-bottom:6px;">Email Address</label>
+                <input type="email" name="email" value="{{ user.email }}"
+                       style="width:100%; padding:10px 12px; border:2px solid #f9a8d4; border-radius:10px; font-size:0.875rem; box-sizing:border-box; background:var(--bg-secondary); color:var(--text-primary);"
+                       placeholder="Email address" aria-label="Email address">
             </div>
         </div>
 
-        <!-- Bio Section -->
-        <div class="note-card p-8 rounded-3xl">
-            <div class="flex items-center gap-3 mb-6">
-                <span class="text-3xl" title="Sparkle icon">✨</span>
-                <h3 class="text-2xl font-bold text-purple-600">About You</h3>
-            </div>
-            <label class="block text-sm font-bold text-gray-400 mb-3">Tell us about yourself</label>
-            <textarea name="bio" rows="5" class="w-full px-5 py-3 rounded-xl border-2 border-pink-300 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200 transition duration-300 resize-none" placeholder="Share something about yourself..." aria-label="Bio">{{ user_profile.bio }}</textarea>
-            <p class="text-xs text-gray-600 mt-2 flex items-center gap-2">
-                <span title="Lightbulb icon">💡</span> Maximum 500 characters
-            </p>
+        <!-- ── Bio ────────────────────────────────────────── -->
+        <div class="note-card rounded-3xl" style="padding:20px;">
+            <h3 class="font-bold text-purple-600 mb-4" style="font-size:1.1rem;">✨ About You</h3>
+            <label class="text-gray-400 font-bold text-xs" style="display:block; margin-bottom:6px;">Tell us about yourself</label>
+            <textarea name="bio" rows="4"
+                      style="width:100%; padding:10px 12px; border:2px solid #f9a8d4; border-radius:10px; font-size:0.875rem; resize:none; box-sizing:border-box; background:var(--bg-secondary); color:var(--text-primary);"
+                      placeholder="Share something about yourself... ✨"
+                      aria-label="Bio">{{ user_profile.bio }}</textarea>
+            <p class="text-gray-400 text-xs mt-1">💡 Maximum 500 characters</p>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12 mb-12">
-            <button type="submit" class="btn-pink text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl transition transform hover:-translate-y-1 flex items-center justify-center gap-3 w-full" title="Save your profile changes">
-                Save Changes
+        <!-- ── Action Buttons ─────────────────────────────── -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; padding-bottom:24px;">
+            <button type="submit"
+                    class="btn-pink text-white rounded-xl font-bold transition"
+                    style="padding:14px; font-size:0.95rem; display:flex; align-items:center; justify-content:center; gap:6px;">
+                💾 Save
             </button>
-            <a href="{% url 'accounts:profile' %}" class="btn-pink text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl transition transform hover:-translate-y-1 flex items-center justify-center gap-3 w-full text-center" title="Cancel and return to profile">
-                Cancel
+            <a href="{% url 'accounts:profile' %}"
+               class="btn-pink text-white rounded-xl font-bold transition"
+               style="padding:14px; font-size:0.95rem; display:flex; align-items:center; justify-content:center; gap:6px; text-decoration:none;">
+                ❌ Cancel
             </a>
         </div>
 
-        <!-- Footer Info -->
-         <div class="text-center pt-8">
-            <p class="text-gray-600 text-sm mb-3">
-                <span title="Calendar icon">📅</span> Member since <span class="font-bold text-purple-600">{{ user.date_joined|date:"F d, Y" }}</span>
-            </p>
-            <p class="text-gray-500 text-xs">
-                🔒 All changes are saved securely to your account
-            </p>
+        <!-- Footer note -->
+        <div class="text-center" style="padding-bottom:16px;">
+            <p class="text-gray-500 text-xs">📅 Member since <strong class="text-purple-600">{{ user.date_joined|date:"F d, Y" }}</strong></p>
+            <p class="text-gray-400 text-xs mt-1">🔒 All changes are saved securely</p>
         </div>
+
     </form>
 </div>
 
 <script>
-function previewImage(event) {
-    const file = event.target.files[0];
-    if (file) {
+document.addEventListener('DOMContentLoaded', function () {
+    const input = document.getElementById('avatarInput');
+    if (!input) return;
+
+    input.addEventListener('change', function () {
+        const file = input.files[0];
+        if (!file) return;
+
+        document.getElementById('uploadDefault').style.display = 'none';
+        document.getElementById('uploadSelected').style.display = 'block';
+        document.getElementById('uploadFilename').textContent = file.name;
+
         const reader = new FileReader();
-        reader.onload = function(e) {
-            const previewContainer = document.getElementById('previewContainer');
-            const previewImage = document.getElementById('previewImage');
-            previewImage.src = e.target.result;
-            previewContainer.classList.remove('hidden');
+        reader.onload = function (e) {
+            document.getElementById('previewImage').src = e.target.result;
+            document.getElementById('previewContainer').style.display = 'block';
         };
         reader.readAsDataURL(file);
-    }
-}
+    });
+});
 </script>
 {% endblock %}

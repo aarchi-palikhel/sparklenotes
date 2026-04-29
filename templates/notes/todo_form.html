@@ -33,10 +33,28 @@
             
             <div class="mb-6">
                 <label class="text-purple-700 font-bold mb-3 text-lg flex items-center">
-                    <span class="mr-2">📅</span>Due Date (Optional)
+                    <span class="mr-2">📅</span>Due Date &amp; Time (Optional)
                 </label>
-                <input type="datetime-local" name="due_date" value="{{ form.due_date.value|default:'' }}"
-                       class="w-full p-4 border-2 border-purple-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 outline-none transition duration-300">
+                <div class="relative">
+                    <input type="datetime-local" name="due_date" id="due_date"
+                           value="{% if form.due_date.value %}{{ form.due_date.value|date:'Y-m-d\TH:i' }}{% endif %}"
+                           style="
+                               width:100%;
+                               padding:14px 16px;
+                               border:2px solid #d8b4fe;
+                               border-radius:12px;
+                               font-size:1rem;
+                               font-family:inherit;
+                               background:#faf5ff;
+                               color:#6b21a8;
+                               cursor:pointer;
+                               outline:none;
+                               appearance:auto;
+                               -webkit-appearance:auto;
+                               box-sizing:border-box;
+                           ">
+                </div>
+                <p class="text-xs text-gray-500 mt-2">📌 Leave empty if there's no deadline</p>
             </div>
             
             <div class="flex space-x-4 justify-center">

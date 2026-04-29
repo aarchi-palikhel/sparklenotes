@@ -1,0 +1,83 @@
+{% extends "admin/base_site.html" %}
+
+{% block content_title %}<h1>⏰ Send Overdue Reminders</h1>{% endblock %}
+
+{% block content %}
+<div style="max-width: 640px;">
+
+    <!-- Stats cards -->
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px;">
+
+        <div style="background: linear-gradient(135deg, #fff7ed, #ffedd5); border: 2px solid #f97316; border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 2.2rem; font-weight: 800; color: #ea580c;">{{ pending_count }}</div>
+            <div style="font-size: 0.85rem; color: #9a3412; font-weight: 600; margin-top: 4px;">📌 Pending Reminders</div>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #fdf2f8, #fce7f3); border: 2px solid #ec4899; border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 2.2rem; font-weight: 800; color: #db2777;">{{ affected_users }}</div>
+            <div style="font-size: 0.85rem; color: #9d174d; font-weight: 600; margin-top: 4px;">👥 Users Affected</div>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 2px solid #22c55e; border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 2.2rem; font-weight: 800; color: #16a34a;">{{ already_sent_count }}</div>
+            <div style="font-size: 0.85rem; color: #166534; font-weight: 600; margin-top: 4px;">✅ Already Reminded</div>
+        </div>
+
+    </div>
+
+    <!-- Info box -->
+    <div style="background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 8px; padding: 16px 20px; margin-bottom: 28px; font-size: 0.9rem; color: #78350f;">
+        <strong>ℹ️ How it works:</strong><br>
+        Clicking the button below will send one email per affected user listing all their
+        incomplete todos whose due date has already passed. Each todo is only reminded
+        <strong>once</strong> — the flag resets only if you manually clear it.
+        <br><br>
+        <strong>Note:</strong> Users' actual note and todo content is never visible here —
+        only the counts above are shown to protect user privacy.
+    </div>
+
+    <!-- Send button -->
+    {% if pending_count %}
+        <form method="post" action="send/">
+            {% csrf_token %}
+            <button type="submit"
+                    onclick="return confirm('Send overdue reminder emails to {{ affected_users }} user(s) for {{ pending_count }} overdue todo(s)?')"
+                    style="
+                        background: linear-gradient(135deg, #f97316, #ec4899);
+                        color: white;
+                        border: none;
+                        padding: 14px 32px;
+                        border-radius: 10px;
+                        font-size: 1rem;
+                        font-weight: 700;
+                        cursor: pointer;
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 10px;
+                        box-shadow: 0 4px 14px rgba(249,115,22,0.35);
+                        transition: opacity 0.2s;
+                    "
+                    onmouseover="this.style.opacity='0.9'"
+                    onmouseout="this.style.opacity='1'">
+                ⏰ Send Overdue Reminders
+                <span style="
+                    background: white;
+                    color: #f97316;
+                    border-radius: 50%;
+                    width: 24px; height: 24px;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 12px;
+                    font-weight: 800;
+                ">{{ pending_count }}</span>
+            </button>
+        </form>
+    {% else %}
+        <div style="background: #f0fdf4; border: 2px solid #86efac; border-radius: 10px; padding: 20px; text-align: center; color: #166534; font-weight: 600;">
+            🎉 All caught up! No overdue todos need reminders right now.
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}
