@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SparkleNotes ✨ - Your Cute Note-Taking App</title>
     {% load static tailwind_tags %}
+    <link rel="icon" type="image/jpeg" href="{% static 'SparkleNotes.jpg' %}">
     {% tailwind_css %}
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
@@ -27,8 +28,7 @@
             --text-secondary: #aaa;
             --card-shadow: 0 8px 24px rgba(0,0,0,0.4);
         }
-
-        /* ── Animations ─────────────────────────────────────── */
+        
         @keyframes gradient {
             0%   { background-position: 0% 50%; }
             50%  { background-position: 100% 50%; }
@@ -49,7 +49,6 @@
             to   { transform:translateX(0); }
         }
 
-        /* ── Typography ─────────────────────────────────────── */
         body {
             font-family: 'Comic Neue', cursive;
             background: var(--bg-primary);
@@ -65,14 +64,12 @@
         h3 { font-size: clamp(1.1rem, 2.5vw, 1.5rem); font-weight:600; margin:1rem 0 .75rem; }
         p  { font-size:1.05rem; line-height:1.6; color:var(--text-secondary); }
 
-        /* ── Layout shell ───────────────────────────────────── */
         .layout {
             display: flex;
             flex: 1;
             min-height: 100vh;
         }
 
-        /* ── Sidebar ────────────────────────────────────────── */
         .sidebar {
             width: var(--sidebar-w);
             min-height: 100vh;
@@ -187,7 +184,6 @@
             transform: rotate(20deg) scale(1.1);
         }
 
-        /* ── Overlay (mobile) ───────────────────────────────── */
         .sidebar-overlay {
             display: none;
             position: fixed;
@@ -198,7 +194,6 @@
 
         .sidebar-overlay.active { display: block; }
 
-        /* ── Top bar (mobile only) ──────────────────────────── */
         .topbar {
             display: none;
             position: fixed;
@@ -237,7 +232,6 @@
             margin-bottom: 0;
         }
 
-        /* ── Hamburger ──────────────────────────────────────── */
         .hamburger {
             background: none;
             border: none;
@@ -260,7 +254,6 @@
         .hamburger.active span:nth-child(2) { opacity: 0; }
         .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
 
-        /* ── Main content ───────────────────────────────────── */
         .main-wrap {
             margin-left: var(--sidebar-w);
             flex: 1;
@@ -274,7 +267,6 @@
             padding: 28px 24px;
         }
 
-        /* ── Cards ──────────────────────────────────────────── */
         .note-card {
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             backdrop-filter: blur(10px);
@@ -309,7 +301,6 @@
             box-shadow: 0 12px 32px rgba(255,200,150,0.25);
         }
 
-        /* ── Buttons ────────────────────────────────────────── */
         .btn-pink {
             background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
             transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
@@ -339,7 +330,6 @@
             background: linear-gradient(135deg, #ff6b7a 0%, #ff8a9e 100%);
         }
 
-        /* ── Forms ──────────────────────────────────────────── */
         input[type="text"],
         input[type="email"],
         input[type="password"],
@@ -378,7 +368,7 @@
             color: #eee;
             border-color: #ff6b7a;
         }
-        /* ── Alerts ─────────────────────────────────────────── */
+        /* Alerts */
         .alert-message {
             border-radius: 12px;
             border-left: 4px solid #10b981;
@@ -397,7 +387,6 @@
             color: #6ee7b7;
         }
 
-        /* ── Misc ───────────────────────────────────────────── */
         .sparkle-text {
             background: linear-gradient(45deg, #ff6b6b, #ff8e8e, #ffb6c1, #ff69b4);
             -webkit-background-clip: text;
@@ -469,7 +458,7 @@
 </head>
 <body>
 
-<!-- ── Mobile top bar ──────────────────────────────────────── -->
+<!-- Mobile top bar -->
 <header class="topbar" id="topbar">
     <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
         <span></span><span></span><span></span>
@@ -480,10 +469,10 @@
     </div>
 </header>
 
-<!-- ── Overlay ─────────────────────────────────────────────── -->
+<!-- Overlay -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<!-- ── Layout ──────────────────────────────────────────────── -->
+<!-- Layout  -->
 <div class="layout">
 
     <!-- Sidebar -->
@@ -496,11 +485,11 @@
 
             <div class="nav-links">
                 {% if user.is_authenticated %}
-                    <a href="{% url 'home' %}"><span>🏠</span><span>Home</span></a>
-                    <a href="{% url 'note_list' %}"><span>📝</span><span>Notes</span></a>
-                    <a href="{% url 'todo_list' %}"><span>✅</span><span>Todos</span></a>
-                    <a href="{% url 'accounts:profile' %}"><span>👤</span><span>Profile</span></a>
-                    <a href="{% url 'accounts:logout' %}"><span>🚪</span><span>Logout</span></a>
+                    <a href="{% url 'home' %}"><span>Home</span></a>
+                    <a href="{% url 'note_list' %}"><span>Notes</span></a>
+                    <a href="{% url 'todo_list' %}"><span>Todos</span></a>
+                    <a href="{% url 'accounts:profile' %}"><span>Profile</span></a>
+                    <a href="{% url 'accounts:logout' %}"><span>Logout</span></a>
                 {% else %}
                     <a href="{% url 'accounts:login' %}"><span>🔓</span><span>Login</span></a>
                     <a href="{% url 'accounts:register' %}"><span>✨</span><span>Register</span></a>
@@ -534,10 +523,10 @@
         </footer>
     </div>
 
-</div><!-- /.layout -->
+</div>
 
 <script>
-    /* ── Theme ──────────────────────────────────────────────── */
+    /*  Theme  */
     const TOGGLES = [document.getElementById('themeToggle'), document.getElementById('themeToggleMobile')];
     const savedTheme = localStorage.getItem('theme') || 'light';
 
@@ -557,7 +546,7 @@
         });
     });
 
-    /* ── Sidebar (mobile) ───────────────────────────────────── */
+    /*  Sidebar (mobile) */
     const hamburger = document.getElementById('hamburger');
     const sidebar   = document.getElementById('sidebar');
     const overlay   = document.getElementById('sidebarOverlay');
@@ -591,7 +580,7 @@
         });
     });
 
-    /* ── Auto-dismiss messages ──────────────────────────────── */
+    /* Auto-dismiss messages  */
     document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.js-auto-dismiss').forEach(el => {
             setTimeout(() => {
@@ -602,7 +591,7 @@
         });
     });
 
-    /* ── AI Summary clear ───────────────────────────────────── */
+    /* AI Summary clear */
     function clearSummary() {
         const csrf = document.querySelector('[name=csrfmiddlewaretoken]');
         fetch('/clear-summary/', {
@@ -614,7 +603,7 @@
         });
     }
 
-    /* ── Todo AI suggest ────────────────────────────────────── */
+    /* Todo AI suggest  */
     function suggestTodo() {
         const input = document.getElementById('task_description');
         if (!input || !input.value.trim()) {
