@@ -56,13 +56,13 @@
             <div class="note-card rounded-2xl" style="padding:14px 16px;">
                 <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
                     <div style="flex:1; min-width:0;">
-                        <p class="font-bold text-purple-600" style="font-size:0.95rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ note.title }}</p>
-                        <p class="text-gray-500" style="font-size:0.8rem; margin-top:3px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">{{ note.content }}</p>
-                        <p class="text-gray-400" style="font-size:0.72rem; margin-top:5px;">📅 {{ note.created_at|date:"M d, Y" }}</p>
+                        <p style="font-weight:700; color:#4c1d95; font-size:0.95rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ note.title }}</p>
+                        <p style="color:#6d28d9; font-size:0.8rem; margin-top:3px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">{{ note.content }}</p>
+                        <p style="color:#8b5cf6; font-size:0.72rem; margin-top:5px;">📅 {{ note.created_at|date:"M d, Y" }}</p>
                     </div>
                     <a href="{% url 'note_edit' note.id %}"
                        class="text-white rounded-lg font-semibold transition"
-                       style="background:#f472b6; padding:6px 12px; font-size:0.78rem; white-space:nowrap; flex-shrink:0;">
+                       style="background:linear-gradient(135deg,#8b5cf6,#ec4899); padding:6px 12px; font-size:0.78rem; white-space:nowrap; flex-shrink:0; text-decoration:none;">
                         Edit ✏️
                     </a>
                 </div>

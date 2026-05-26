@@ -1,0 +1,101 @@
+{% extends 'notes/base.html' %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-2">
+
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <div class="w-16 h-16 bg-linear-to-r from-purple-400 to-pink-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <span class="text-white text-2xl">📊</span>
+        </div>
+        <h1 class="font-bold sparkle-text mb-2" style="font-size:clamp(1.6rem,5vw,2.2rem);">Your Weekly Digest ✨</h1>
+        <p class="text-gray-500 text-sm">A sparkly summary of your last 7 days</p>
+    </div>
+
+    <!-- AI Message -->
+    <div class="note-card rounded-3xl mb-6 p-6">
+        <div class="flex items-start gap-3">
+            <span class="text-2xl flex-shrink-0">🤖</span>
+            <div>
+                <p class="font-bold text-purple-600 mb-2 text-sm">AI Weekly Message</p>
+                <p class="text-gray-700 leading-relaxed">{{ digest }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats row -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px;">
+        <div class="note-card rounded-2xl text-center" style="padding:16px 8px;">
+            <div class="font-bold sparkle-text" style="font-size:2rem;">{{ notes_count }}</div>
+            <p class="text-gray-500 text-xs mt-1">📝 Notes Written</p>
+        </div>
+        <div class="todo-card rounded-2xl text-center" style="padding:16px 8px;">
+            <div class="font-bold text-green-600" style="font-size:2rem;">{{ completed_count }}</div>
+            <p class="text-gray-500 text-xs mt-1">✅ Tasks Done</p>
+        </div>
+        <div class="note-card rounded-2xl text-center" style="padding:16px 8px;">
+            <div class="font-bold text-orange-500" style="font-size:2rem;">{{ pending_count }}</div>
+            <p class="text-gray-500 text-xs mt-1">⏳ Still Pending</p>
+        </div>
+    </div>
+
+    <!-- Notes this week -->
+    {% if notes %}
+    <div class="note-card rounded-2xl mb-6 p-5">
+        <h3 class="font-bold text-purple-600 mb-3" style="font-size:1rem;">📝 Notes This Week</h3>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+            {% for note in notes %}
+            <div class="inner-box">
+                <p class="font-semibold text-gray-800 text-sm">{{ note.title }}</p>
+                <p class="text-gray-500 text-xs mt-1">{{ note.created_at|date:"M d, Y" }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Completed todos -->
+    {% if completed_todos %}
+    <div class="todo-card rounded-2xl mb-6 p-5">
+        <h3 class="font-bold text-green-600 mb-3" style="font-size:1rem;">🎉 Completed This Week</h3>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+            {% for todo in completed_todos %}
+            <div class="inner-box" style="display:flex; align-items:center; gap:8px;">
+                <span>✅</span>
+                <p class="text-gray-700 text-sm" style="text-decoration:line-through;">{{ todo.title }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Pending todos -->
+    {% if pending_todos %}
+    <div class="todo-card rounded-2xl mb-6 p-5">
+        <h3 class="font-bold text-orange-500 mb-3" style="font-size:1rem;">⏳ Still Pending</h3>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+            {% for todo in pending_todos %}
+            <div class="inner-box" style="display:flex; align-items:flex-start; gap:8px;">
+                <span>📌</span>
+                <div>
+                    <p class="text-gray-700 text-sm font-semibold">{{ todo.title }}</p>
+                    {% if todo.due_date %}
+                    <p class="text-xs text-red-400 mt-1">⏰ Due: {{ todo.due_date|date:"M d, Y g:i a" }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Actions -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; padding-bottom:24px;">
+        <a href="{% url 'note_create' %}" class="btn-pink text-white rounded-xl font-bold text-center transition"
+           style="padding:12px; font-size:0.9rem;">📝 New Note</a>
+        <a href="{% url 'todo_create' %}" class="btn-pink text-white rounded-xl font-bold text-center transition"
+           style="padding:12px; font-size:0.9rem;">✅ New Todo</a>
+    </div>
+
+</div>
+{% endblock %}

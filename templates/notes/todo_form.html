@@ -35,25 +35,19 @@
                 <label class="text-purple-700 font-bold mb-3 text-lg flex items-center">
                     <span class="mr-2">📅</span>Due Date &amp; Time (Optional)
                 </label>
-                <div class="relative">
-                    <input type="datetime-local" name="due_date" id="due_date"
-                           value="{% if form.due_date.value %}{{ form.due_date.value|date:'Y-m-d\TH:i' }}{% endif %}"
-                           style="
-                               width:100%;
-                               padding:14px 16px;
-                               border:2px solid #d8b4fe;
-                               border-radius:12px;
-                               font-size:1rem;
-                               font-family:inherit;
-                               background:#faf5ff;
-                               color:#6b21a8;
-                               cursor:pointer;
-                               outline:none;
-                               appearance:auto;
-                               -webkit-appearance:auto;
-                               box-sizing:border-box;
-                           ">
+                <div class="flex gap-2 items-start">
+                    <div class="flex-1">
+                        <input type="datetime-local" name="due_date" id="due_date"
+                               value="{% if form.due_date.value %}{{ form.due_date.value|date:'Y-m-d\TH:i' }}{% endif %}"
+                               style="width:100%;padding:14px 16px;border:2px solid #d8b4fe;border-radius:12px;font-size:1rem;font-family:inherit;background:#faf5ff;color:#6b21a8;cursor:pointer;outline:none;appearance:auto;-webkit-appearance:auto;box-sizing:border-box;">
+                    </div>
+                    <button type="button" onclick="suggestDueDate()"
+                            class="bg-linear-to-r from-purple-400 to-pink-400 text-white px-4 py-3 rounded-xl text-sm font-semibold hover:shadow-lg transition whitespace-nowrap"
+                            title="AI suggest due date">
+                        🤖 Suggest
+                    </button>
                 </div>
+                <p id="dueDateLoading" class="text-xs text-purple-500 mt-1 hidden">✨ Thinking of a deadline...</p>
                 <p class="text-xs text-gray-500 mt-2">📌 Leave empty if there's no deadline</p>
             </div>
             
@@ -68,4 +62,32 @@
         </form>
     </div>
 </div>
+
+<script>
+const CSRF_TODO = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+function suggestDueDate() {
+    const title = document.querySelector('[name=title]').value.trim();
+    const desc  = document.querySelector('[name=description]').value.trim();
+    const text  = (title + ' ' + desc).trim();
+    if (!text) { alert('Enter a task title or description first! ✨'); return; }
+
+    const loading = document.getElementById('dueDateLoading');
+    loading.classList.remove('hidden');
+
+    fetch('{% url "suggest_due_date" %}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': CSRF_TODO },
+        body: 'description=' + encodeURIComponent(text)
+    })
+    .then(r => r.json())
+    .then(data => {
+        loading.classList.add('hidden');
+        if (data.due_date) {
+            document.getElementById('due_date').value = data.due_date;
+        }
+    })
+    .catch(() => loading.classList.add('hidden'));
+}
+</script>
 {% endblock %}
