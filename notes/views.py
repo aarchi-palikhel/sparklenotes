@@ -57,7 +57,7 @@ def note_edit(request, pk):
             return redirect('note_list')
     else:
         form = NoteForm(instance=note)
-    return render(request, 'notes/note_form.html', {'form': form, 'title': 'Edit Note'})
+    return render(request, 'notes/note_form.html', {'form': form, 'title': 'Edit Note', 'note': note})
 
 @login_required(login_url='accounts:login')
 def note_delete(request, pk):
@@ -134,3 +134,74 @@ def suggest_todo(request):
         suggestions = gemini_client.suggest_todo(task_description)
         return JsonResponse({'suggestions': suggestions})
     return JsonResponse({'error': 'Invalid request'})
+
+
+# ── New AI Views ───────────────────────────────────────────────────────────────
+
+@login_required(login_url='accounts:login')
+def improve_note(request, pk):
+    """Rewrite a note to be clearer or more formal."""
+    note = get_object_or_404(Note, pk=pk, user=request.user)
+    if request.method == 'POST':
+        style = request.POST.get('style', 'clear')
+        improved = gemini_client.improve_note(note.content, style=style)
+        return JsonResponse({'improved': improved})
+    return JsonResponse({'error': 'Invalid request'})
+
+
+@login_required(login_url='accounts:login')
+def suggest_title(request):
+    """Suggest a title based on note content typed so far."""
+    if request.method == 'POST':
+        content = request.POST.get('content', '')
+        title = gemini_client.suggest_title(content)
+        return JsonResponse({'title': title})
+    return JsonResponse({'error': 'Invalid request'})
+
+
+@login_required(login_url='accounts:login')
+def detect_mood(request, pk):
+    """Detect the mood/tone of a note."""
+    note = get_object_or_404(Note, pk=pk, user=request.user)
+    mood = gemini_client.detect_mood(note.content)
+    return JsonResponse({'mood': mood})
+
+
+@login_required(login_url='accounts:login')
+def suggest_due_date(request):
+    """Suggest a due date based on task description."""
+    if request.method == 'POST':
+        description = request.POST.get('description', '')
+        due_date = gemini_client.suggest_due_date(description)
+        if due_date:
+            return JsonResponse({'due_date': due_date})
+        return JsonResponse({'due_date': None, 'message': 'Could not determine a date'})
+    return JsonResponse({'error': 'Invalid request'})
+
+
+@login_required(login_url='accounts:login')
+def weekly_digest(request):
+    """Show the weekly AI digest page."""
+    from django.utils import timezone
+    from datetime import timedelta
+    week_ago = timezone.now() - timedelta(days=7)
+
+    notes = request.user.notes.filter(created_at__gte=week_ago).order_by('-created_at')
+    # TodoItem has no updated_at — use created_at to find todos created this week
+    # and check completed separately
+    completed_todos = request.user.todos.filter(completed=True, created_at__gte=week_ago)
+    pending_todos = request.user.todos.filter(completed=False).order_by('due_date')
+
+    digest = gemini_client.generate_weekly_digest(
+        request.user, notes, completed_todos, pending_todos
+    )
+    context = {
+        'digest': digest,
+        'notes': notes,
+        'completed_todos': completed_todos,
+        'pending_todos': pending_todos,
+        'notes_count': notes.count(),
+        'completed_count': completed_todos.count(),
+        'pending_count': pending_todos.count(),
+    }
+    return render(request, 'notes/weekly_digest.html', context)

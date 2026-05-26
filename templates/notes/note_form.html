@@ -8,38 +8,124 @@
         </div>
         <h2 class="text-4xl font-bold sparkle-text">{{ title }} ✨</h2>
     </div>
-    
+
     <div class="note-card p-8 rounded-2xl">
-        <form method="post">
+        <form method="post" id="noteForm">
             {% csrf_token %}
-            
+
+            <!-- Title -->
             <div class="mb-6">
                 <label class="text-pink-700 font-bold mb-3 text-lg flex items-center">
                     <span class="mr-2">📝</span>Note Title
                 </label>
-                <input type="text" name="title" value="{{ form.title.value|default:'' }}" 
-                       class="w-full p-4 border-2 border-pink-200 rounded-xl focus:border-pink-400 focus:ring-2 focus:ring-pink-200 outline-none transition duration-300"
-                       placeholder="Enter a cute title..." required>
+                <div class="flex gap-2">
+                    <input type="text" name="title" id="noteTitle"
+                           value="{{ form.title.value|default:'' }}"
+                           class="flex-1 p-4 border-2 border-pink-200 rounded-xl focus:border-pink-400 outline-none transition"
+                           placeholder="Enter a cute title..." required>
+                    <button type="button" onclick="suggestTitle()"
+                            class="bg-linear-to-r from-purple-400 to-pink-400 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:shadow-lg transition whitespace-nowrap"
+                            title="AI suggest title">
+                        🤖 Suggest
+                    </button>
+                </div>
+                <p id="titleLoading" class="text-xs text-purple-500 mt-1 hidden">✨ Thinking of a title...</p>
             </div>
-            
-            <div class="mb-6">
+
+            <!-- Content -->
+            <div class="mb-4">
                 <label class="text-pink-700 font-bold mb-3 text-lg flex items-center">
                     <span class="mr-2">💭</span>Your Thoughts
                 </label>
-                <textarea name="content" rows="8" 
-                          class="w-full p-4 border-2 border-pink-200 rounded-xl focus:border-pink-400 focus:ring-2 focus:ring-pink-200 outline-none transition duration-300"
+                <textarea name="content" id="noteContent" rows="8"
+                          class="w-full p-4 border-2 border-pink-200 rounded-xl focus:border-pink-400 outline-none transition"
                           placeholder="Write your sparkly thoughts here... ✨" required>{{ form.content.value|default:'' }}</textarea>
             </div>
-            
-            <div class="flex space-x-4 justify-center">
+
+            <!-- AI Improve buttons (only on edit page where note pk exists) -->
+            {% if note %}
+            <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:20px; padding:12px 16px; background:rgba(139,92,246,0.06); border-radius:12px; border:1px solid rgba(139,92,246,0.15);">
+                <span style="font-size:0.8rem; color:#6b7280; font-weight:600;">🤖 AI Improve:</span>
+                <button type="button" onclick="improveNote('clear')" class="btn-action btn-improve">
+                    ✨ Make Clearer
+                </button>
+                <button type="button" onclick="improveNote('formal')" class="btn-action btn-formal">
+                    👔 Make Formal
+                </button>
+            </div>
+
+            <!-- Improved content preview -->
+            <div id="improvedBox" style="display:none; margin-bottom:20px; background:linear-gradient(135deg,#f3e8ff,#ede9fe); border:2px solid #c4b5fd; border-radius:14px; padding:16px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <p style="font-weight:700; color:#7c3aed; font-size:0.875rem; margin:0;">✨ AI Improved Version</p>
+                    <div style="display:flex; gap:8px;">
+                        <button type="button" onclick="applyImproved()"
+                                style="background:#7c3aed; color:white; border:none; padding:5px 12px; border-radius:8px; font-size:0.75rem; font-weight:700; cursor:pointer;">
+                            Use This ✅
+                        </button>
+                        <button type="button" onclick="document.getElementById('improvedBox').style.display='none'"
+                                style="background:none; border:none; color:#9ca3af; font-size:1.2rem; cursor:pointer; line-height:1;">&times;</button>
+                    </div>
+                </div>
+                <p id="improvedText" style="color:#374151; font-size:0.875rem; white-space:pre-wrap; line-height:1.7; margin:0;"></p>
+            </div>
+            {% endif %}
+
+            <div class="flex flex-wrap gap-3 justify-center">
                 <button type="submit" class="btn-pink text-white px-8 py-3 rounded-full font-semibold text-lg shadow-lg flex items-center">
                     <span class="mr-2">💾</span>Save Note
                 </button>
-                <a href="{% url 'note_list' %}" class="bg-linear-to-r from-gray-400 to-gray-500 text-white px-8 py-3 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition duration-300 flex items-center">
+                <a href="{% url 'note_list' %}" class="bg-linear-to-r from-gray-400 to-gray-500 text-white px-8 py-3 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition flex items-center">
                     <span class="mr-2">❌</span>Cancel
                 </a>
             </div>
         </form>
     </div>
 </div>
+
+<script>
+const CSRF = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+function suggestTitle() {
+    const content = document.getElementById('noteContent').value.trim();
+    if (!content) { alert('Write some content first so I can suggest a title! ✨'); return; }
+    const loading = document.getElementById('titleLoading');
+    loading.classList.remove('hidden');
+    fetch('{% url "suggest_title" %}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': CSRF },
+        body: 'content=' + encodeURIComponent(content)
+    })
+    .then(r => r.json())
+    .then(data => {
+        loading.classList.add('hidden');
+        if (data.title) document.getElementById('noteTitle').value = data.title;
+    })
+    .catch(() => loading.classList.add('hidden'));
+}
+
+{% if note %}
+function improveNote(style) {
+    const content = document.getElementById('noteContent').value.trim();
+    if (!content) { alert('Write some content first! ✨'); return; }
+    const box = document.getElementById('improvedBox');
+    const text = document.getElementById('improvedText');
+    text.textContent = '✨ Improving your note...';
+    box.style.display = 'block';
+    fetch('{% url "improve_note" note.pk %}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': CSRF },
+        body: 'content=' + encodeURIComponent(content) + '&style=' + style
+    })
+    .then(r => r.json())
+    .then(data => { text.textContent = data.improved || 'Could not improve right now. 💕'; })
+    .catch(() => { text.textContent = 'Something went wrong. Try again! 💕'; });
+}
+
+function applyImproved() {
+    document.getElementById('noteContent').value = document.getElementById('improvedText').textContent;
+    document.getElementById('improvedBox').style.display = 'none';
+}
+{% endif %}
+</script>
 {% endblock %}
