@@ -1,74 +1,91 @@
-# SparkleNotes ✨
+# SparkleNotes
 
-A cute, feature-rich note-taking app with AI integration, email notifications, and a fully responsive design — built with Django and Tailwind CSS.
+A full-stack note-taking and task management web application built with Django and Tailwind CSS. It includes AI-powered writing tools, automated email notifications, user authentication, and a fully responsive interface.
+
+---
 
 ## Features
 
-- **📝 Notes** — Create, edit, and organise your notes with a beautiful UI
-- **✅ Todos** — Task management with due dates and AI-powered suggestions
-- **🤖 Gemini AI** — Smart note summaries and todo suggestions via Google Gemini
-- **📧 Email Integration** — Welcome emails on signup, forgot password flow, and overdue task reminders
-- **🔐 Flexible Login** — Sign in with either your username or email address
-- **👤 User Profiles** — Avatar upload (stored in DB), bio, and personal info
-- **🛡️ Admin Tools** — Send overdue reminder emails to users directly from the admin panel
-- **🌙 Dark Mode** — Toggle between light and dark themes
-- **📱 Responsive** — Fully mobile-friendly with a slide-in sidebar
+### Notes and Tasks
+- Create, edit, delete, and organise personal notes
+- Task management with optional due dates and completion tracking
+- Notes and todos are scoped per user, no cross-user data access
+
+### AI Integration (Google Gemini)
+- Summarise any note with one click
+- Rewrite a note to be clearer or more formal
+- Auto-suggest a title based on note content
+- Detect the emotional tone of a note
+- Suggest a realistic due date based on task description
+- AI-powered subtask suggestions for todos
+- Weekly digest page with a personalised AI summary of the past 7 days
+
+### Email
+- Welcome email sent automatically on registration
+- Forgot password flow with a time-limited reset link
+- Overdue task reminder emails sent from the admin panel (one grouped email per user, sent once per todo)
+
+### Authentication
+- Register and log in with username or email address
+- Password reset via email
+- User profiles with avatar (stored in the database), bio, and personal info
+
+### Admin
+- Custom admin dashboard for sending overdue reminder emails
+- User notes and todos are not visible in the admin — only aggregate counts are shown
+
+### UI and Accessibility
+- Light and dark mode toggle, persisted in localStorage
+- Fully responsive layout with a fixed sidebar on desktop and a slide-in drawer on mobile
+- Password visibility toggle on all password fields
+- Auto-dismissing notifications with a manual close button
+
+---
 
 ## Tech Stack
 
 | Layer | Technology |
 |---|---|
 | Backend | Django 5.2 |
-| Frontend | Tailwind CSS + Custom CSS |
+| Frontend | Tailwind CSS, Custom CSS |
 | Database | PostgreSQL |
-| AI | Google Gemini API |
-| Email | Gmail SMTP (configurable) |
+| AI | Google Gemini API (`google-generativeai`) |
+| Email | SMTP (Gmail by default, configurable) |
+| Auth | Django built-in authentication |
 
-## Quick Start
-
-See [SETUP.md](SETUP.md) for full installation instructions.
-
-```bash
-git clone https://github.com/aarchi-palikhel/sparklenotes.git
-cd sparklenotes
-pip install -r requirements.txt
-cp .env.example .env   # fill in your credentials
-python manage.py migrate
-python manage.py runserver
-```
+---
 
 ## Project Structure
 
 ```
 sparklenotes/
-├── accounts/              # Auth, profiles, password reset
-├── notes/                 # Notes, todos, AI features, admin tools
-├── notes_project/         # Django project settings, Gemini client
+├── accounts/                  # Registration, login, profiles, password reset
+├── notes/                     # Notes, todos, AI views, admin tools
+├── notes_project/             # Django settings, URLs, Gemini client
 ├── templates/
-│   ├── accounts/          # Login, register, profile, email templates
-│   └── notes/             # Base layout, home, notes, todos
-├── theme/                 # Tailwind CSS theme
-├── .env.example           # Environment variable reference
-└── requirements.txt
+│   ├── accounts/              # Auth pages and email templates
+│   └── notes/                 # Base layout, home, notes, todos, digest
+├── theme/                     # Tailwind CSS configuration
+├── static/                    # Static assets (favicon, etc.)
+├── .env.example               # Environment variable reference
+├── requirements.txt
+├── README.md
+└── SETUP.md
 ```
 
-## Environment Variables
 
-Copy `.env.example` to `.env` and fill in:
+## Admin: Overdue Reminders
 
-| Variable | Description |
-|---|---|
-| `SECRET_KEY` | Django secret key |
-| `DB_NAME` / `DB_USER` / `DB_PASSWORD` | PostgreSQL credentials |
-| `GEMINI_API_KEY` | Google Gemini API key |
-| `EMAIL_HOST_USER` | Gmail address for sending emails |
-| `EMAIL_HOST_PASSWORD` | Gmail App Password (16 chars, no spaces) |
-| `SITE_URL` | Base URL used in email links (default: `http://127.0.0.1:8000`) |
+Log in to `/admin/` with a superuser account and open **Send Overdue Reminders** from the sidebar. The dashboard shows how many users have incomplete past-due todos and lets you send grouped reminder emails with a single button click. Each todo is flagged after being reminded so duplicate emails are never sent.
 
-## Admin — Overdue Reminders
+---
 
-Log in to `/admin/` and navigate to **Send Overdue Reminders** to send a single grouped email to every user who has incomplete todos past their due date. Each todo is only reminded once.
+## AI Fallback
+
+If the Gemini API quota is exceeded or unavailable, the application automatically falls back to pre-written responses. Users always receive a result, the app never crashes or shows an error due to AI unavailability.
+
+---
 
 ## Contributing
 
-Feel free to fork and submit pull requests!
+Fork the repository and open a pull request. Please create a feature branch rather than committing directly to `main`.
